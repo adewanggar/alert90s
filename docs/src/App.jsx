@@ -298,7 +298,10 @@ function App() {
   return (
     <div className="container">
       <header className="header">
-        <h1>Alert90s Documentation</h1>
+        <div className="header-title-wrapper">
+          <img src="/alert90s.webp" alt="Alert90s Logo" className="header-logo" />
+          <h1>Alert90s Documentation</h1>
+        </div>
         <p><marquee scrollamount="10" scrolldelay="0">A "Neo Brutalism 90s" style JS alert library. Completely standalone and dependency-free.</marquee></p>
         <div className="install-box">
           <code>npm install alert90s</code>
