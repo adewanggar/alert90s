@@ -1,0 +1,649 @@
+import './styles.css';
+
+class Alert90s {
+  static getOptions() {
+    return this.currentOptions || {};
+  }
+  static getPopup() {
+    return this.currentPopup || null;
+  }
+  static getTimerLeft() {
+    if (!this.timerEnd) return undefined;
+    const left = this.timerEnd - Date.now();
+    return left > 0 ? left : 0;
+  }
+  static isLoading() {
+    const popup = this.getPopup();
+    if (!popup) return false;
+    // Check if buttons are hidden and loader is present
+    const actions = popup.querySelector('.alert90s-actions');
+    const loader = popup.querySelector('.alert90s-loader');
+    return (actions && actions.style.display === 'none') || !!loader;
+  }
+  static showLoading() {
+    const popup = this.getPopup();
+    if (popup) {
+      const actions = popup.querySelector('.alert90s-actions');
+      if (actions) actions.style.display = 'none'; // hide buttons
+      
+      let loader = popup.querySelector('.alert90s-loader');
+      if (!loader) {
+        loader = document.createElement('div');
+        loader.className = 'alert90s-loader';
+        
+        const type = (Alert90s.currentOptions && Alert90s.currentOptions.loaderType) || 'hourglass';
+        if (type === 'ascii') {
+          loader.innerHTML = '<div class="alert90s-spinner ascii"></div>';
+        } else if (type === 'blinking') {
+          loader.innerHTML = '<div class="alert90s-spinner blinking">LOADING<span class="cursor">_</span></div>';
+        } else if (type === 'progress') {
+          loader.innerHTML = '<div class="alert90s-spinner progress"></div>';
+        } else {
+          loader.innerHTML = '<div class="alert90s-spinner hourglass">⏳</div>';
+        }
+        
+        // Insert loader where actions were
+        if (actions && actions.parentNode) {
+          actions.parentNode.insertBefore(loader, actions);
+        } else {
+          popup.querySelector('.alert90s-body').appendChild(loader);
+        }
+      }
+    }
+  }
+  static hideLoading() {
+    const popup = this.getPopup();
+    if (popup) {
+      const actions = popup.querySelector('.alert90s-actions');
+      if (actions) actions.style.display = ''; // restore buttons
+      
+      const loader = popup.querySelector('.alert90s-loader');
+      if (loader) loader.remove();
+    }
+  }
+  static showValidationMessage(message) {
+    const popup = this.getPopup();
+    if (popup) {
+      let valEl = popup.querySelector('.alert90s-validation-message');
+      if (!valEl) {
+        valEl = document.createElement('div');
+        valEl.className = 'alert90s-validation-message';
+        // Insert validation message before actions
+        const actions = popup.querySelector('.alert90s-actions');
+        if (actions && actions.parentNode) {
+          actions.parentNode.insertBefore(valEl, actions);
+        } else {
+          popup.querySelector('.alert90s-body').appendChild(valEl);
+        }
+      }
+      valEl.innerHTML = message;
+      valEl.style.display = 'block';
+    }
+  }
+  static resetValidationMessage() {
+    const popup = this.getPopup();
+    if (popup) {
+      const valEl = popup.querySelector('.alert90s-validation-message');
+      if (valEl) valEl.style.display = 'none';
+    }
+  }
+
+  static fire(options = {}) {
+    return this.show(options);
+  }
+
+  static show(options = {}) {
+    return new Promise((resolve) => {
+      if (typeof options === 'string') {
+        options = { title: options };
+      }
+      this.currentOptions = options;
+      
+      const config = {
+        title: options.title !== undefined ? options.title : '',
+        text: options.message || options.text || '',
+        html: options.html || '',
+        icon: options.type || options.icon || '', 
+        iconHtml: options.iconHtml || '',
+        
+        // Buttons
+        showConfirmButton: options.showConfirmButton !== false,
+        showCancelButton: options.showCancelButton || false,
+        showDenyButton: options.showDenyButton || false,
+        showCloseButton: options.showCloseButton !== undefined ? options.showCloseButton : true,
+        loaderType: options.loaderType || 'hourglass',
+        
+        confirmButtonText: options.confirmText || options.confirmButtonText || 'OK',
+        cancelButtonText: options.cancelText || options.cancelButtonText || 'Cancel',
+        denyButtonText: options.denyText || options.denyButtonText || 'No',
+        
+        confirmButtonColor: options.confirmButtonColor || '',
+        cancelButtonColor: options.cancelButtonColor || '',
+        denyButtonColor: options.denyButtonColor || '',
+
+        // Custom Styles
+        background: options.background || '',
+        color: options.color || '',
+        titleColor: options.titleColor || '',
+        iconColor: options.iconColor || '',
+
+        confirmButtonAriaLabel: options.confirmButtonAriaLabel || '',
+        cancelButtonAriaLabel: options.cancelButtonAriaLabel || '',
+        denyButtonAriaLabel: options.denyButtonAriaLabel || '',
+        
+        focusConfirm: options.focusConfirm !== false,
+        
+        // Advanced content
+        footer: options.footer || '',
+        imageUrl: options.imageUrl || '',
+        imageWidth: options.imageWidth || null,
+        imageHeight: options.imageHeight || null,
+        imageAlt: options.imageAlt || '',
+        
+        // Input
+        input: options.input || null, // 'text', 'email', 'password', 'number', 'tel', 'url', 'textarea'
+        inputAttributes: options.inputAttributes || {},
+        showLoaderOnConfirm: options.showLoaderOnConfirm || false,
+        preConfirm: options.preConfirm || null,
+        
+        // Behavior
+        toast: options.toast || false,
+        draggable: options.draggable || false,
+        position: options.position || (options.toast ? 'top-end' : 'center'),
+        allowOutsideClick: options.allowOutsideClick !== undefined ? options.allowOutsideClick : true,
+        
+        // Display options
+        dir: options.dir || 'auto', // 'rtl', 'ltr', 'auto'
+        
+        // Animations
+        showClass: options.showClass || { popup: 'alert90s-pop-in' },
+        hideClass: options.hideClass || { popup: 'alert90s-fade-out' },
+
+        // Timers
+        timer: options.timer || null,
+        timerProgressBar: options.timerProgressBar || false,
+
+        // Callbacks
+        didOpen: options.didOpen || null,
+        willClose: options.willClose || null,
+      };
+
+      // Create overlay
+      const overlay = document.createElement('div');
+      overlay.className = `alert90s-overlay alert90s-pos-${config.position}`;
+      if (config.toast) {
+        overlay.classList.add('toast-overlay');
+      }
+      
+      // Handle allowOutsideClick
+      overlay.addEventListener('mousedown', (e) => {
+        if (e.target === overlay) {
+          const allow = typeof config.allowOutsideClick === 'function' ? config.allowOutsideClick() : config.allowOutsideClick;
+          if (allow) {
+             finish({ isConfirmed: false, isDenied: false, isDismissed: true, dismiss: 'backdrop' });
+          }
+        }
+      });
+
+      // Create Box
+      const box = document.createElement('div');
+      box.className = 'alert90s-box';
+      if (config.toast) box.classList.add('alert90s-toast');
+      
+      // RTL support
+      if (document.dir === 'rtl' || config.dir === 'rtl' || config.position.includes('start')) {
+        box.setAttribute('dir', config.dir === 'auto' ? (document.dir || 'ltr') : config.dir);
+      } else {
+        box.setAttribute('dir', config.dir);
+      }
+
+      // Apply custom show classes
+      if (config.showClass.popup) {
+        if (config.showClass.popup !== 'alert90s-pop-in') {
+          box.style.animation = 'none';
+          box.className = `alert90s-box ${config.showClass.popup}`;
+        }
+      }
+
+      // Custom styling for Box
+      if (config.background) box.style.backgroundColor = config.background;
+      if (config.color) box.style.color = config.color;
+
+      if (config.draggable) {
+        box.classList.add('is-draggable');
+      }
+
+      this.currentPopup = box;
+
+      const bodyContainer = document.createElement('div');
+      bodyContainer.className = 'alert90s-body';
+
+      // Header
+      const header = document.createElement('div');
+      header.className = 'alert90s-header';
+      if (config.draggable) header.classList.add('draggable');
+      
+      let closeButtonHtml = '';
+      if (config.showCloseButton) {
+        closeButtonHtml = `
+          <button class="alert90s-close-btn" id="alert90s-close" aria-label="Close">
+            <span>&#10005;</span>
+          </button>
+        `;
+      }
+
+      header.innerHTML = `
+        <div class="alert90s-header-left">
+          <div class="alert90s-header-dot"></div>
+          <div class="alert90s-header-dot"></div>
+          <div class="alert90s-header-dot"></div>
+        </div>
+        <div class="alert90s-header-right">
+          <span class="alert90s-header-title">SYS.REQ</span>
+          ${closeButtonHtml}
+        </div>
+      `;
+
+      // Draggable Logic
+      if (config.draggable) {
+        let isDragging = false;
+        let startX, startY, initialBoxX, initialBoxY;
+
+        header.addEventListener('mousedown', (e) => {
+          if (e.target.closest('#alert90s-close')) return;
+          isDragging = true;
+          startX = e.clientX;
+          startY = e.clientY;
+          const rect = box.getBoundingClientRect();
+          box.style.transform = 'none';
+          box.style.animation = 'none';
+          initialBoxX = rect.left;
+          initialBoxY = rect.top;
+          box.style.left = initialBoxX + 'px';
+          box.style.top = initialBoxY + 'px';
+          box.style.margin = '0'; 
+          document.body.style.userSelect = 'none';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+          if (!isDragging) return;
+          box.style.left = (initialBoxX + (e.clientX - startX)) + 'px';
+          box.style.top = (initialBoxY + (e.clientY - startY)) + 'px';
+        });
+
+        document.addEventListener('mouseup', () => {
+          if (isDragging) {
+            isDragging = false;
+            document.body.style.userSelect = '';
+          }
+        });
+      }
+
+      // Progress Bar
+      let progressBarEl = null;
+      if (config.timer && config.timerProgressBar) {
+        progressBarEl = document.createElement('div');
+        progressBarEl.className = 'alert90s-progress-bar';
+        progressBarEl.style.animationDuration = `${config.timer}ms`;
+        box.appendChild(progressBarEl);
+      }
+
+      // Image
+      if (config.imageUrl) {
+        const imgContainer = document.createElement('div');
+        imgContainer.className = 'alert90s-image-container';
+        const img = document.createElement('img');
+        img.src = config.imageUrl;
+        if (config.imageAlt) img.alt = config.imageAlt;
+        
+        let containerStyle = '';
+        if (config.imageWidth) containerStyle += `width: ${config.imageWidth}px; max-width: 100%; `;
+        if (config.imageHeight) containerStyle += `height: ${config.imageHeight}px; `;
+        if (containerStyle) imgContainer.setAttribute('style', containerStyle);
+        
+        imgContainer.appendChild(img);
+        bodyContainer.appendChild(imgContainer);
+      }
+
+      // Icon
+      if (config.icon) {
+        const iconWrapper = document.createElement('div');
+        const typeClass = config.icon === 'error' ? 'danger' : config.icon;
+        iconWrapper.className = `alert90s-icon ${typeClass}`;
+        
+        let iconHTML = '';
+        if (config.iconHtml) {
+          iconHTML = `<div class="alert90s-icon-custom">${config.iconHtml}</div>`;
+        } else if (config.icon === 'warning') {
+          iconHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+        } else if (config.icon === 'danger' || config.icon === 'error') {
+          iconHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+        } else if (config.icon === 'info') {
+          iconHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+        } else if (config.icon === 'success') {
+          iconHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>';
+        } else if (config.icon === 'question') {
+           iconHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+        }
+        
+        iconWrapper.innerHTML = iconHTML;
+        
+        // Custom icon color
+        if (config.iconColor) {
+          iconWrapper.style.color = config.iconColor;
+          iconWrapper.style.borderColor = config.iconColor;
+          // Also set SVG stroke if it's not custom HTML
+          if (!config.iconHtml) {
+             const svg = iconWrapper.querySelector('svg');
+             if (svg) svg.style.stroke = config.iconColor;
+          }
+        }
+        
+        if (iconHTML) bodyContainer.appendChild(iconWrapper);
+      }
+
+      // Title and Content Wrapper
+      const contentWrapper = document.createElement('div');
+      contentWrapper.className = 'alert90s-content-wrapper';
+
+      // Title
+      if (config.title) {
+        const titleEl = document.createElement('h2');
+        titleEl.className = 'alert90s-title';
+        titleEl.innerHTML = config.title;
+        if (config.titleColor) titleEl.style.color = config.titleColor;
+        contentWrapper.appendChild(titleEl);
+      }
+
+      // Content (Text/HTML)
+      if (config.html) {
+        const htmlEl = document.createElement('div');
+        htmlEl.className = 'alert90s-html';
+        htmlEl.innerHTML = config.html;
+        if (config.color) htmlEl.style.color = config.color;
+        contentWrapper.appendChild(htmlEl);
+      } else if (config.text) {
+        const messageEl = document.createElement('p');
+        messageEl.className = 'alert90s-message';
+        messageEl.textContent = config.text;
+        if (config.color) messageEl.style.color = config.color;
+        contentWrapper.appendChild(messageEl);
+      }
+
+      if (config.title || config.html || config.text) {
+        bodyContainer.appendChild(contentWrapper);
+      }
+
+      if (config.toast && config.showCloseButton) {
+        const toastClose = document.createElement('button');
+        toastClose.className = 'alert90s-toast-close';
+        toastClose.innerHTML = '<span>&#10005;</span>';
+        toastClose.onclick = () => finish({ isConfirmed: false, isDenied: false, isDismissed: true, dismiss: 'close' });
+        bodyContainer.appendChild(toastClose);
+      }
+
+      // Input form
+      let inputEl = null;
+      if (config.input) {
+        const inputContainer = document.createElement('div');
+        inputContainer.className = 'alert90s-input-container';
+        
+        if (config.input === 'textarea') {
+          inputEl = document.createElement('textarea');
+        } else {
+          inputEl = document.createElement('input');
+          inputEl.type = config.input;
+        }
+        
+        inputEl.className = 'alert90s-input';
+        
+        // Apply custom attributes
+        if (config.inputAttributes) {
+          for (const [key, val] of Object.entries(config.inputAttributes)) {
+            inputEl.setAttribute(key, val);
+          }
+        }
+        
+        inputContainer.appendChild(inputEl);
+        bodyContainer.appendChild(inputContainer);
+      }
+
+      // Actions
+      const actions = document.createElement('div');
+      actions.className = 'alert90s-actions';
+
+      let confirmBtnRef = null;
+      let timerIntervalObj = null;
+
+      const finish = (resultObj) => {
+        if (timerIntervalObj) clearTimeout(timerIntervalObj);
+        if (config.willClose) config.willClose();
+        
+        box.style.animation = 'none';
+        
+        if (config.hideClass.popup === 'alert90s-fade-out') {
+           box.style.animation = 'alert90s-fade-out 0.2s forwards';
+           overlay.style.transition = 'opacity 0.2s';
+           overlay.style.opacity = '0';
+        } else {
+           box.className = `alert90s-box ${config.hideClass.popup}`;
+        }
+        
+        setTimeout(() => {
+          if (document.body.contains(overlay)) {
+            document.body.removeChild(overlay);
+          }
+          resolve(resultObj);
+        }, 200);
+      };
+
+      // Handler for Confirm to support preConfirm and input
+      const handleConfirm = async () => {
+        let val = true;
+        
+        if (inputEl) {
+          val = inputEl.value;
+        }
+
+        if (config.preConfirm) {
+          Alert90s.resetValidationMessage();
+          if (config.showLoaderOnConfirm) {
+            Alert90s.showLoading();
+          }
+          try {
+            const preConfirmResult = await Promise.resolve(config.preConfirm(val));
+            if (preConfirmResult === false) {
+               Alert90s.hideLoading();
+               return; // Prevent closing
+            }
+            if (preConfirmResult !== undefined && preConfirmResult !== val) {
+               val = preConfirmResult;
+            }
+            // Check if a validation error was shown during preConfirm
+            const valEl = box.querySelector('.alert90s-validation-message');
+            if (valEl && valEl.style.display === 'block') {
+               Alert90s.hideLoading();
+               return; // Prevent closing
+            }
+          } catch (error) {
+            Alert90s.showValidationMessage(`Request failed: ${error}`);
+            Alert90s.hideLoading();
+            return; // Prevent closing
+          }
+        }
+        
+        finish({ isConfirmed: true, isDenied: false, isDismissed: false, value: val });
+      };
+
+      if (config.showCancelButton) {
+        const cancelBtn = document.createElement('button');
+        cancelBtn.className = 'alert90s-button cancel';
+        cancelBtn.innerHTML = config.cancelButtonText;
+        if (config.cancelButtonAriaLabel) cancelBtn.setAttribute('aria-label', config.cancelButtonAriaLabel);
+        if (config.cancelButtonColor) cancelBtn.style.backgroundColor = config.cancelButtonColor;
+        cancelBtn.onclick = () => finish({ isConfirmed: false, isDenied: false, isDismissed: true, dismiss: 'cancel' });
+        actions.appendChild(cancelBtn);
+      }
+
+      if (config.showDenyButton) {
+        const denyBtn = document.createElement('button');
+        denyBtn.className = 'alert90s-button deny';
+        denyBtn.innerHTML = config.denyButtonText;
+        if (config.denyButtonAriaLabel) denyBtn.setAttribute('aria-label', config.denyButtonAriaLabel);
+        if (config.denyButtonColor) denyBtn.style.backgroundColor = config.denyButtonColor;
+        denyBtn.onclick = () => finish({ isConfirmed: false, isDenied: true, isDismissed: false });
+        actions.appendChild(denyBtn);
+      }
+
+      if (config.showConfirmButton) {
+        const confirmBtn = document.createElement('button');
+        confirmBtn.className = 'alert90s-button confirm';
+        confirmBtn.innerHTML = config.confirmButtonText;
+        if (config.confirmButtonAriaLabel) confirmBtn.setAttribute('aria-label', config.confirmButtonAriaLabel);
+        if (config.confirmButtonColor) confirmBtn.style.backgroundColor = config.confirmButtonColor;
+        confirmBtn.onclick = handleConfirm;
+        actions.appendChild(confirmBtn);
+        confirmBtnRef = confirmBtn;
+      }
+
+      if (config.showCancelButton || config.showDenyButton || config.showConfirmButton) {
+        bodyContainer.appendChild(actions);
+      }
+
+      // Footer
+      if (config.footer) {
+        const footerEl = document.createElement('div');
+        footerEl.className = 'alert90s-footer';
+        footerEl.innerHTML = config.footer;
+        bodyContainer.appendChild(footerEl);
+      }
+
+      // Assemble
+      box.appendChild(header);
+      box.appendChild(bodyContainer);
+      overlay.appendChild(box);
+
+      if (config.showCloseButton) {
+        const closeBtn = header.querySelector('#alert90s-close');
+        if (closeBtn) {
+          closeBtn.onclick = () => finish({ isConfirmed: false, isDenied: false, isDismissed: true, dismiss: 'close' });
+        }
+      }
+
+      // Append to body
+      document.body.appendChild(overlay);
+
+      // Focus
+      if (config.focusConfirm && confirmBtnRef) {
+        setTimeout(() => { 
+          // If input is present, sweetalert focuses input first
+          if (inputEl) inputEl.focus();
+          else confirmBtnRef.focus(); 
+        }, 50);
+      }
+
+      // User hooks & timers
+      if (config.didOpen) {
+        setTimeout(() => { config.didOpen(); }, 0);
+      }
+
+      if (config.timer) {
+        this.timerEnd = Date.now() + config.timer;
+        timerIntervalObj = setTimeout(() => {
+          finish({ isConfirmed: false, isDenied: false, isDismissed: true, dismiss: 'timer' });
+        }, config.timer);
+      }
+    });
+  }
+
+  // --- Tooltip / Popover Management ---
+  static initTooltips() {
+    if (this._tooltipsInitialized) return;
+    this._tooltipsInitialized = true;
+
+    this._tooltipEl = document.createElement('div');
+    this._tooltipEl.className = 'alert90s-tooltip';
+    document.body.appendChild(this._tooltipEl);
+
+    document.addEventListener('mouseover', this._handleTooltipMouseOver.bind(this));
+    document.addEventListener('mouseout', this._handleTooltipMouseOut.bind(this));
+    
+    // Support focus for accessibility / keyboard navigation
+    document.addEventListener('focusin', this._handleTooltipMouseOver.bind(this));
+    document.addEventListener('focusout', this._handleTooltipMouseOut.bind(this));
+  }
+
+  static _handleTooltipMouseOver(e) {
+    const target = e.target.closest('[data-alert90s-tooltip]');
+    if (!target) return;
+
+    const message = target.getAttribute('data-alert90s-tooltip');
+    if (!message) return;
+
+    const position = target.getAttribute('data-alert90s-position') || 'top';
+    const colorClass = target.getAttribute('data-alert90s-color') || 'yellow'; // yellow, cyan, pink, base
+
+    this._tooltipEl.innerHTML = message;
+    
+    // Reset classes
+    this._tooltipEl.className = `alert90s-tooltip pos-${position} c-${colorClass} show`;
+
+    const targetRect = target.getBoundingClientRect();
+    const tooltipRect = this._tooltipEl.getBoundingClientRect();
+    const offset = 10; // Distance from element
+
+    let top = 0;
+    let left = 0;
+
+    switch (position) {
+      case 'top':
+        top = targetRect.top - tooltipRect.height - offset;
+        left = targetRect.left + (targetRect.width / 2) - (tooltipRect.width / 2);
+        break;
+      case 'bottom':
+        top = targetRect.bottom + offset;
+        left = targetRect.left + (targetRect.width / 2) - (tooltipRect.width / 2);
+        break;
+      case 'left':
+        top = targetRect.top + (targetRect.height / 2) - (tooltipRect.height / 2);
+        left = targetRect.left - tooltipRect.width - offset;
+        break;
+      case 'right':
+        top = targetRect.top + (targetRect.height / 2) - (tooltipRect.height / 2);
+        left = targetRect.right + offset;
+        break;
+    }
+
+    // Boundary constraints (prevent off-screen)
+    if (left < offset) left = offset;
+    if (top < offset) top = offset;
+    if (left + tooltipRect.width > window.innerWidth - offset) {
+      left = window.innerWidth - tooltipRect.width - offset;
+    }
+
+    this._tooltipEl.style.top = `${top + window.scrollY}px`;
+    this._tooltipEl.style.left = `${left + window.scrollX}px`;
+  }
+
+  static _handleTooltipMouseOut(e) {
+    const target = e.target.closest('[data-alert90s-tooltip]');
+    if (!target) return;
+    
+    // Small delay to prevent flickering if moving inside the element
+    setTimeout(() => {
+        if (!this._tooltipEl.matches(':hover') && !target.matches(':hover') && !target.contains(document.activeElement)) {
+             this._tooltipEl.classList.remove('show');
+        }
+    }, 10);
+  }
+}
+
+export default Alert90s;
+// Make it globally available on window if not using module bundler
+if (typeof window !== 'undefined') {
+  window.Alert90s = Alert90s;
+  // Auto-init tooltips on DOM load for drop-in usage
+  document.addEventListener('DOMContentLoaded', () => {
+    Alert90s.initTooltips();
+  });
+}

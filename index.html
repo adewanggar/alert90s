@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Alert 90s Testing Ground</title>
+    <!-- Font Awesome for HTML button demo -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Space Grotesk", sans-serif;
+        background-color: #f0f0f0;
+        display: flex;
+        gap: 1rem;
+        padding: 2rem;
+        flex-wrap: wrap;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        font-family: inherit;
+        cursor: pointer;
+        border: 4px solid #000;
+        background: #fff;
+        font-weight: bold;
+        box-shadow: 4px 4px 0 0 #000;
+        transition: all 0.1s;
+      }
+      button:active {
+        box-shadow: 0 0 0 0 #000;
+        transform: translate(4px, 4px);
+      }
+      h1 { width: 100%; border-bottom: 4px solid #000; padding-bottom: 1rem; }
+    </style>
+    <!-- Include the compiled library for testing -->
+    <script src="./dist/alert90s.min.js"></script>
+  </head>
+  <body>
+    <h1>Alert90s Advanced Features</h1>
+    
+    <button id="btn-basic">1. Basic Message</button>
+    <button id="btn-footer">2. Error + Footer</button>
+    <button id="btn-html">3. HTML & ARIA</button>
+    <button id="btn-three">4. Three Buttons</button>
+    <button id="btn-position">5. Position & Timer</button>
+    <button id="btn-animate">6. Animate.css</button>
+    <button id="btn-promise">7. Promise chain</button>
+    <button id="btn-custom-image">8. Custom Image</button>
+    <button id="btn-auto-close">9. Auto Close</button>
+    <button id="btn-drag">10. Draggable Modal</button>
+    <button id="btn-rtl">11. RTL Language Support</button>
+    <button id="btn-ajax">12. AJAX Request & Input</button>
+    <button id="btn-colors">13. Custom Colors</button>
+    <button id="btn-toast">14. Toast Notification</button>
+    <button id="btn-toast-bottom">15. Toast Bottom RTL</button>
+    <button id="btn-toast-info">16. Toast Top Start (Info)</button>
+    <button id="btn-toast-warning">17. Toast Bottom Center (Warning)</button>
+    <button id="btn-loading">18. Manual Loading Animation</button>
+    <button id="btn-loading-ascii">19. ASCII Loader</button>
+    <button id="btn-loading-blink">20. Blinking Loader</button>
+    <button id="btn-loading-prog">21. Progress Loader</button>
+    
+    <div style="width: 100%; height: 1px; background: #000; margin: 1rem 0;"></div>
+    
+    <button id="btn-warning">Show Warning Alert</button>
+    <button id="btn-danger">Show Danger Alert</button>
+    <button id="btn-info">Show Info Alert</button>
+
+    <script>
+      // 1. Basic Message
+      document.getElementById("btn-basic").addEventListener("click", () => {
+        Alert90s.fire({
+          text: "CONNECTION ESTABLISHED.",
+          showConfirmButton: true
+        });
+      });
+
+      // 2. Error + Footer
+      document.getElementById("btn-footer").addEventListener("click", () => {
+        Alert90s.fire({
+          icon: "error",
+          title: "DISK READ ERROR",
+          text: "Sector 4 is corrupted. Data loss imminent.",
+          footer: '<a href="#">RUN SCANDISK.EXE NOW?</a>'
+        });
+      });
+
+      // 3. HTML & ARIA
+      document.getElementById("btn-html").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "<strong>DOWNLOAD <u>COMPLETE</u></strong>",
+          icon: "info",
+          html: `
+            File <b>DOOM_SHAREWARE.ZIP</b> has been downloaded.
+            <br/><br/>
+            Check your <a href="#" autofocus>C:\\DOWNLOADS</a> folder to extract.
+          `,
+          showCloseButton: true,
+          showCancelButton: true,
+          focusConfirm: false,
+          confirmButtonText: '<i class="fa fa-floppy-disk"></i> INSTALL',
+          confirmButtonAriaLabel: "Play Doom",
+          cancelButtonText: '<i class="fa fa-trash"></i> DELETE',
+          cancelButtonAriaLabel: "Delete File"
+        });
+      });
+
+      // 4. Three Buttons
+      document.getElementById("btn-three").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "OVERWRITE CONFIG.SYS?",
+          showDenyButton: true,
+          showCancelButton: true,
+          confirmButtonText: "YES",
+          denyButtonText: `NO, KEEP OLD`
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Alert90s.fire("SAVED!", "System will reboot to apply changes.", "success");
+          } else if (result.isDenied) {
+            Alert90s.fire("ABORTED", "Keeping old configuration.", "info");
+          }
+        });
+      });
+
+      // 5. Custom positioned dialog with Timer
+      document.getElementById("btn-position").addEventListener("click", () => {
+        Alert90s.fire({
+          position: "top-end",
+          icon: "success",
+          title: "VIRUS DEFINITIONS UPDATED",
+          showConfirmButton: false,
+          timer: 1500
+        });
+      });
+
+      // 6. Custom animation with Animate.css
+      document.getElementById("btn-animate").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "ACCESS GRANTED",
+          text: "Entering Mainframe...",
+          showClass: {
+            popup: `
+              animate__animated
+              animate__fadeInUp
+              animate__faster
+            `
+          },
+          hideClass: {
+            popup: `
+              animate__animated
+              animate__fadeOutDown
+              animate__faster
+            `
+          }
+        });
+      });
+
+      // 7. Confirm Dialog with Function Chain
+      document.getElementById("btn-promise").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "FORMAT C: ?",
+          text: "ALL DATA WILL BE DESTROYED!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#ef4444",
+          cancelButtonColor: "#94a3b8",
+          confirmButtonText: "PROCEED"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Alert90s.fire({
+              title: "FORMAT COMPLETE",
+              text: "Disk C: is now empty. Please insert DOS diskette.",
+              icon: "success"
+            });
+          }
+        });
+      });
+
+      // 8. Custom Image
+      document.getElementById("btn-custom-image").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "WINAMP.EXE",
+          text: "It really whips the llama's ass!",
+          imageUrl: "https://placeholder.pics/svg/400x200",
+          imageWidth: 400,
+          imageHeight: 200,
+          imageAlt: "Retro application banner"
+        });
+      });
+
+      // 9. Auto close timer
+      document.getElementById("btn-auto-close").addEventListener("click", () => {
+        let timerInterval;
+        Alert90s.fire({
+          title: "DIALING MODEM...",
+          html: "Connecting to BBS in <b></b> ms.",
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: () => {
+            Alert90s.showLoading();
+            const timer = Alert90s.getPopup().querySelector("b");
+            timerInterval = setInterval(() => {
+              timer.textContent = `${Alert90s.getTimerLeft()}`;
+            }, 100);
+          },
+          willClose: () => {
+            clearInterval(timerInterval);
+          }
+        }).then((result) => {
+          if (result.dismiss === 'timer') {
+            console.log("Connected successfully!");
+          }
+        });
+      });
+
+      // 10. Draggable Modal
+      document.getElementById("btn-drag").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "FILE MANAGER",
+          text: "Drag this window by the header bar.",
+          icon: "info",
+          draggable: true
+        });
+      });
+
+      // 11. RTL Language Support
+      document.getElementById("btn-rtl").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "هل تريد الاستمرار؟",
+          text: "يتم تحميل النظام الآن...",
+          icon: "question",
+          iconHtml: "؟",
+          confirmButtonText: "نعم",
+          cancelButtonText: "لا",
+          showCancelButton: true,
+          showCloseButton: true,
+          dir: 'rtl'
+        });
+      });
+
+      // 12. AJAX Request Example
+      document.getElementById("btn-ajax").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "ENTER GUEST PASSWORD",
+          input: "text",
+          inputAttributes: {
+            autocapitalize: "off"
+          },
+          showCancelButton: true,
+          confirmButtonText: "AUTHENTICATE",
+          showLoaderOnConfirm: true,
+          preConfirm: async (login) => {
+            try {
+              const githubUrl = `https://api.github.com/users/${login}`;
+              const response = await fetch(githubUrl);
+              if (!response.ok) {
+                return Alert90s.showValidationMessage(`
+                  ${JSON.stringify(await response.json())}
+                `);
+              }
+              return response.json();
+            } catch (error) {
+              Alert90s.showValidationMessage(`
+                CONNECTION FAILED: ${error}
+              `);
+            }
+          },
+          allowOutsideClick: () => !Alert90s.isLoading()
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Alert90s.fire({
+              title: `USER: ${result.value.login}`,
+              text: "Acess Granted.",
+              imageUrl: result.value.avatar_url,
+              imageWidth: 200,
+              imageHeight: 200
+            });
+          }
+        });
+      });
+
+      // 13. Custom Colors Example
+      document.getElementById("btn-colors").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "MATRIX MODE",
+          text: "Customizing appearance properties.",
+          icon: "success",
+          background: "#1a2e05",
+          color: "#bef264",
+          titleColor: "#4ade80",
+          iconColor: "#84cc16",
+          confirmButtonColor: "#84cc16",
+          confirmButtonText: "WAKE UP"
+        });
+      });
+
+      // 14. Toast Notification
+      document.getElementById("btn-toast").addEventListener("click", () => {
+        Alert90s.fire({
+          toast: true,
+          position: "top-end",
+          icon: "success",
+          title: "File Saved Successfully",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true
+        });
+      });
+
+      // 15. Toast Bottom RTL
+      document.getElementById("btn-toast-bottom").addEventListener("click", () => {
+        Alert90s.fire({
+          toast: true,
+          position: "bottom-end",
+          icon: "error",
+          title: "فشل الاتصال",
+          text: "حدث خطأ غير معروف.",
+          showConfirmButton: false,
+          showCloseButton: true,
+          dir: 'rtl',
+          timer: 5000
+        });
+      });
+
+      // 16. Toast Top Start Info
+      document.getElementById("btn-toast-info").addEventListener("click", () => {
+        Alert90s.fire({
+          toast: true,
+          position: "top-start",
+          icon: "info",
+          title: "System Update",
+          text: "Version 2.0 is now available.",
+          showConfirmButton: false,
+          showCloseButton: true,
+          timer: 4000
+        });
+      });
+
+      // 17. Toast Bottom Center Warning
+      document.getElementById("btn-toast-warning").addEventListener("click", () => {
+        Alert90s.fire({
+          toast: true,
+          position: "bottom",
+          icon: "warning",
+          title: "Low Battery",
+          text: "Please connect PC to charger.",
+          showConfirmButton: false,
+          timer: 3500,
+          background: "#fef08a",
+          color: "#854d0e"
+        });
+      });
+
+      // 18. Manual Loading Animation
+      document.getElementById("btn-loading").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "DOWNLOADING MORE RAM...",
+          text: "Please hold the line.",
+          loaderType: "hourglass",
+          didOpen: () => { Alert90s.showLoading(); }
+        });
+        setTimeout(() => { if(Alert90s.isLoading()) Alert90s.hideLoading(); }, 3000);
+      });
+
+      // 19. ASCII Loader
+      document.getElementById("btn-loading-ascii").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "CONNECTING TO BBS...",
+          loaderType: "ascii",
+          didOpen: () => { Alert90s.showLoading(); }
+        });
+        setTimeout(() => { if(Alert90s.isLoading()) Alert90s.hideLoading(); }, 3000);
+      });
+
+      // 20. Blinking Loader
+      document.getElementById("btn-loading-blink").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "INITIALIZING DEVICE...",
+          loaderType: "blinking",
+          didOpen: () => { Alert90s.showLoading(); }
+        });
+        setTimeout(() => { if(Alert90s.isLoading()) Alert90s.hideLoading(); }, 3000);
+      });
+
+      // 21. Progress Loader
+      document.getElementById("btn-loading-prog").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "INSTALLING DOOM.EXE...",
+          loaderType: "progress",
+          didOpen: () => { Alert90s.showLoading(); }
+        });
+        setTimeout(() => { if(Alert90s.isLoading()) Alert90s.hideLoading(); }, 3000);
+      });
+
+      // Legacy API tests
+      document.getElementById("btn-warning").addEventListener("click", () => {
+        Alert90s.show({
+          title: "SYSTEM PROMPT",
+          message: "ARE YOU SURE YOU WANT TO PROCEED?",
+          type: "warning",
+          showCancelButton: true,
+          onConfirm: () => console.log("Confirmed Warning!"),
+          onCancel: () => console.log("Cancelled Warning!"),
+        });
+      });
+
+      document.getElementById("btn-danger").addEventListener("click", () => {
+        Alert90s.show({
+          title: "CRITICAL ERROR",
+          message: "PERMANENT DELETION IMMINENT. CONTINUE?",
+          type: "danger",
+          confirmText: "YES, DELETE",
+          onConfirm: () => console.log("Confirmed Danger!"),
+        });
+      });
+
+      document.getElementById("btn-info").addEventListener("click", () => {
+        Alert90s.show({
+          title: "INFORMATION",
+          message: "UPDATE INSTALLED SUCCESSFULLY.",
+          type: "info",
+          confirmText: "OK",
+          showCancelButton: false,
+          onConfirm: () => console.log("Confirmed Info!"),
+        });
+      });
+    </script>
+  </body>
+</html>
