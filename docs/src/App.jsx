@@ -32,6 +32,7 @@ function CodeBlock({ title, code }) {
 
 function App() {
   const [activeTab, setActiveTab] = useState('alerts');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const showBasic = () => {
     Alert90s.fire({
@@ -314,8 +315,20 @@ function App() {
       </header>
       
       <div className="layout">
-        <nav className="sidebar">
-          <ul>
+        <button 
+          className="mobile-menu-btn" 
+          onClick={() => setIsSidebarOpen(true)}
+        >
+          MENU
+        </button>
+        
+        {isSidebarOpen && <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>}
+
+        <nav className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
+          <button className="mobile-close-btn" onClick={() => setIsSidebarOpen(false)}>X</button>
+          <ul onClick={(e) => {
+            if(e.target.tagName === 'A') setIsSidebarOpen(false);
+          }}>
             <li><a href="#installation">Installation</a></li>
             <li><a href="#usage">Usage</a></li>
             <li><a href="#examples">Examples</a></li>
