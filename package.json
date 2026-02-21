@@ -1,6 +1,6 @@
 {
   "name": "alert90s",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Neo Brutalism 90s style JS alert library",
   "main": "dist/alert90s.min.js",
   "files": [
