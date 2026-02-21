@@ -306,6 +306,7 @@ function App() {
         <div className="support-links">
           <a href="https://saweria.co/adewanggar" target="_blank" rel="noopener noreferrer" className="support-btn saweria">Support via Saweria</a>
           <a href="https://ko-fi.com/adewanggar" target="_blank" rel="noopener noreferrer" className="support-btn kofi">Support via Ko-fi</a>
+          <a href="https://www.dewangga.site/" target="_blank" rel="noopener noreferrer" className="support-btn portfolio">Portfolio Website</a>
         </div>
       </header>
       
@@ -861,7 +862,9 @@ Alert90s.fire({
       
       <footer className="footer">
         <p>Built with Neo Brutalism 90s vibes.</p>
-        <p>Created by Alfansyah Dewangga Rizqita</p>
+        <p>
+          Created by <a href="https://www.dewangga.site/" target="_blank" rel="noopener noreferrer" style={{color: '#ff90e8', textDecoration: 'none', borderBottom: '3px solid #ff90e8', paddingBottom: '2px', transition: 'color 0.2s', display: 'inline-block'}}>Alfansyah Dewangga Rizqita</a>
+        </p>
       </footer>
     </div>
   )

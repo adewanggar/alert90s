@@ -117,6 +117,13 @@ body {
   background: #66f6ff;
 }
 
+.support-btn.portfolio {
+  background: #b4fa72;
+}
+.support-btn.portfolio:hover {
+  background: #d9f99d;
+}
+
 .layout {
   display: flex;
   flex-direction: column;
