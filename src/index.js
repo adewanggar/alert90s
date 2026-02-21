@@ -88,6 +88,17 @@ class Alert90s {
     }
   }
 
+  static getToastContainer(position) {
+    const containerClass = `alert90s-toast-container alert90s-toast-${position}`;
+    let container = document.querySelector(`.${containerClass.replace(/ /g, '.')}`);
+    if (!container) {
+      container = document.createElement('div');
+      container.className = containerClass;
+      document.body.appendChild(container);
+    }
+    return container;
+  }
+
   static fire(options = {}) {
     return this.show(options);
   }
@@ -168,22 +179,22 @@ class Alert90s {
         willClose: options.willClose || null,
       };
 
-      // Create overlay
-      const overlay = document.createElement('div');
-      overlay.className = `alert90s-overlay alert90s-pos-${config.position}`;
-      if (config.toast) {
-        overlay.classList.add('toast-overlay');
-      }
-      
-      // Handle allowOutsideClick
-      overlay.addEventListener('mousedown', (e) => {
-        if (e.target === overlay) {
-          const allow = typeof config.allowOutsideClick === 'function' ? config.allowOutsideClick() : config.allowOutsideClick;
-          if (allow) {
-             finish({ isConfirmed: false, isDenied: false, isDismissed: true, dismiss: 'backdrop' });
+      // Create overlay (only for non-toasts)
+      let overlay = null;
+      if (!config.toast) {
+        overlay = document.createElement('div');
+        overlay.className = `alert90s-overlay alert90s-pos-${config.position}`;
+        
+        // Handle allowOutsideClick
+        overlay.addEventListener('mousedown', (e) => {
+          if (e.target === overlay) {
+            const allow = typeof config.allowOutsideClick === 'function' ? config.allowOutsideClick() : config.allowOutsideClick;
+            if (allow) {
+               finish({ isConfirmed: false, isDenied: false, isDismissed: true, dismiss: 'backdrop' });
+            }
           }
-        }
-      });
+        });
+      }
 
       // Create Box
       const box = document.createElement('div');
@@ -213,7 +224,10 @@ class Alert90s {
         box.classList.add('is-draggable');
       }
 
-      this.currentPopup = box;
+      if (!config.toast) {
+        // Only assign currentPopup for Modal Alerts (singleton pattern)
+        this.currentPopup = box;
+      }
 
       const bodyContainer = document.createElement('div');
       bodyContainer.className = 'alert90s-body';
@@ -423,15 +437,23 @@ class Alert90s {
         
         if (config.hideClass.popup === 'alert90s-fade-out') {
            box.style.animation = 'alert90s-fade-out 0.2s forwards';
-           overlay.style.transition = 'opacity 0.2s';
-           overlay.style.opacity = '0';
+           if (overlay) {
+             overlay.style.transition = 'opacity 0.2s';
+             overlay.style.opacity = '0';
+           }
         } else {
            box.className = `alert90s-box ${config.hideClass.popup}`;
         }
         
         setTimeout(() => {
-          if (document.body.contains(overlay)) {
-            document.body.removeChild(overlay);
+          if (config.toast) {
+            if (box.parentNode) {
+              box.parentNode.removeChild(box);
+            }
+          } else {
+            if (overlay && document.body.contains(overlay)) {
+              document.body.removeChild(overlay);
+            }
           }
           resolve(resultObj);
         }, 200);
@@ -521,17 +543,29 @@ class Alert90s {
       // Assemble
       box.appendChild(header);
       box.appendChild(bodyContainer);
-      overlay.appendChild(box);
+      
+      if (config.toast) {
+        const container = Alert90s.getToastContainer(config.position);
+        
+        // Setup initial animation specifically for toast
+        box.style.animation = 'alert90s-toast-slide-in 0.3s ease-out';
+        
+        container.appendChild(box);
+      } else {
+        overlay.appendChild(box);
+      }
 
-      if (config.showCloseButton) {
+      if (config.showCloseButton && !config.toast) {
         const closeBtn = header.querySelector('#alert90s-close');
         if (closeBtn) {
           closeBtn.onclick = () => finish({ isConfirmed: false, isDenied: false, isDismissed: true, dismiss: 'close' });
         }
       }
 
-      // Append to body
-      document.body.appendChild(overlay);
+      // Append to body (if it's not a toast)
+      if (!config.toast) {
+        document.body.appendChild(overlay);
+      }
 
       // Focus
       if (config.focusConfirm && confirmBtnRef) {

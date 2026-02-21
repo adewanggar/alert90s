@@ -415,16 +415,37 @@ textarea.alert90s-input {
 @keyframes alert90s-fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes alert90s-pop-in { 0% { transform: scale(0.95) translateY(10px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
 @keyframes alert90s-fade-out { 0% { transform: scale(1) translateY(0); opacity: 1; } 100% { transform: scale(0.95) translateY(10px); opacity: 0; } }
+@keyframes alert90s-toast-slide-in { 0% { transform: scale(0.9) translateY(20px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
 
-/* Toast Styles */
-.alert90s-overlay.toast-overlay {
-  background-color: transparent !important;
-  backdrop-filter: none !important;
+/* Toast Containers */
+.alert90s-toast-container {
+  position: fixed;
+  display: flex;
+  z-index: 10000;
+  padding: 10px;
   pointer-events: none;
+  gap: 10px;
 }
 
+.alert90s-toast-top-start { top: 0; left: 0; flex-direction: column; }
+.alert90s-toast-top { top: 0; left: 50%; transform: translateX(-50%); flex-direction: column; }
+.alert90s-toast-top-end { top: 0; right: 0; flex-direction: column; }
+.alert90s-toast-center-start { top: 50%; left: 0; transform: translateY(-50%); flex-direction: column; }
+.alert90s-toast-center { top: 50%; left: 50%; transform: translate(-50%, -50%); flex-direction: column; }
+.alert90s-toast-center-end { top: 50%; right: 0; transform: translateY(-50%); flex-direction: column; }
+.alert90s-toast-bottom-start { bottom: 0; left: 0; flex-direction: column-reverse; }
+.alert90s-toast-bottom { bottom: 0; left: 50%; transform: translateX(-50%); flex-direction: column-reverse; }
+.alert90s-toast-bottom-end { bottom: 0; right: 0; flex-direction: column-reverse; }
+
+/* Toast Styles */
 .alert90s-box.alert90s-toast {
   pointer-events: auto;
+  position: relative !important;
+  transform: none !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
   width: auto;
   min-width: 250px;
   max-width: 100%;
@@ -432,6 +453,7 @@ textarea.alert90s-input {
   align-items: stretch;
   padding: 0;
   box-shadow: 6px 6px 0 0 #000;
+  margin: 0;
 }
 
 .alert90s-toast .alert90s-header {

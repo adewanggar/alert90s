@@ -593,6 +593,33 @@ Alert90s.fire({
   showConfirmButton: false,
 });`} />
                 </div>
+
+                <div className="card">
+                  <h3>Spam Toasts (Stacking Test)</h3>
+                  <button onClick={() => {
+                    for(let i = 0; i < 5; i++) {
+                      setTimeout(() => {
+                        Alert90s.fire({
+                          toast: true,
+                          position: "top-end",
+                          icon: "success",
+                          title: `Download ${i+1}/5 Complete`,
+                          showConfirmButton: false,
+                          timer: 3000
+                        });
+                      }, i * 400);
+                    }
+                  }}>SPAM TOASTS</button>
+                  <CodeBlock code={`for(let i = 0; i < 5; i++) {
+  setTimeout(() => {
+    Alert90s.fire({
+      toast: true,
+      position: "top-end",
+      title: \`Download \${i+1}/5 Complete\`
+    });
+  }, i * 400);
+}`} />
+                </div>
               </div>
             )}
 

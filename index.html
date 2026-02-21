@@ -66,6 +66,7 @@
     <button id="btn-loading-ascii">19. ASCII Loader</button>
     <button id="btn-loading-blink">20. Blinking Loader</button>
     <button id="btn-loading-prog">21. Progress Loader</button>
+    <button id="btn-toast-spam">22. Spam Toasts (Stacking)</button>
     
     <div style="width: 100%; height: 1px; background: #000; margin: 1rem 0;"></div>
     
@@ -397,6 +398,23 @@
           didOpen: () => { Alert90s.showLoading(); }
         });
         setTimeout(() => { if(Alert90s.isLoading()) Alert90s.hideLoading(); }, 3000);
+      });
+
+      // 22. Spam Toasts (Stacking Test)
+      document.getElementById("btn-toast-spam").addEventListener("click", () => {
+        for(let i = 0; i < 5; i++) {
+          setTimeout(() => {
+            Alert90s.fire({
+              toast: true,
+              position: "top-end",
+              icon: "info",
+              title: `New Message ${i+1}`,
+              text: "System notification received.",
+              showConfirmButton: false,
+              timer: 3000
+            });
+          }, i * 300);
+        }
       });
 
       // Legacy API tests
