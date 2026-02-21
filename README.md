@@ -204,11 +204,12 @@ If you find this project useful, you can support its development:
 - `Alert90s.getTimerLeft()`
 - `Alert90s.getPopup()`
 
+## Author
+
+- **Dewangga** - [Portfolio & Contact](https://www.dewangga.site/)
+
 ## License
 
 MIT
 
 # alert90s
-
-
-
