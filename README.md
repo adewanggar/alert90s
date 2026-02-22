@@ -192,6 +192,7 @@ If you'd like to collaborate or just say hi, visit my [Portfolio Website](https:
 | inputValue        | String   | ''          | Initial value or checked state (for boolean inputs).                                                      |
 | inputOptions      | Object   | {}          | Object mapping `{value: 'Label'}` for `select`/`radio`.                                                   |
 | inputAttributes   | Object   | {}          | Custom HTML attributes for the input element.                                                             |
+| theme             | String   | 'light'     | Native dark mode support (`'light'`, `'dark'`, or `'auto'`).                                              |
 | dir               | String   | 'auto'      | Text direction. Set `rtl` for Arabic/Hebrew.                                                              |
 | position          | String   | 'center'    | `top`, `top-end`, `bottom-start`, etc.                                                                    |
 | timer             | Number   | null        | Auto close timer in milliseconds.                                                                         |
@@ -210,8 +211,8 @@ If you'd like to collaborate or just say hi, visit my [Portfolio Website](https:
 - `Alert90s.showValidationMessage(message)` / `Alert90s.resetValidationMessage()`
 - `Alert90s.getTimerLeft()`
 - `Alert90s.getPopup()`
-- `Alert90s.initTooltips()`
-- `Alert90s.destroyTooltips()`
+- `Alert90s.initTooltips()` / `Alert90s.destroyTooltips()`
+- `Alert90s.renderThemeToggle(selector, options)`
 
 ## License
 

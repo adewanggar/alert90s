@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Alert90s from 'alert90s'
 import 'alert90s/dist/alert90s.min.js' 
 import './App.css'
@@ -33,6 +33,27 @@ function CodeBlock({ title, code }) {
 function App() {
   const [activeTab, setActiveTab] = useState('alerts');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const themeToggleRef = useRef(null);
+
+  useEffect(() => {
+    // Configure default alert theme tracking
+    window.alert90sTheme = 'light';
+    const originalFire = Alert90s.fire;
+    Alert90s.fire = (opts) => originalFire.call(Alert90s, { theme: window.alert90sTheme, ...opts });
+    const originalShow = Alert90s.show;
+    Alert90s.show = (opts) => originalShow.call(Alert90s, { theme: window.alert90sTheme, ...opts });
+
+    if (themeToggleRef.current && !themeToggleRef.current.hasChildNodes()) {
+      Alert90s.renderThemeToggle('#docs-theme-toggle', {
+        width: '120px',
+        onChange: (isDark) => {
+          window.alert90sTheme = isDark ? 'dark' : 'light';
+          if (isDark) document.body.classList.add('dark');
+          else document.body.classList.remove('dark');
+        }
+      });
+    }
+  }, []);
 
   const showBasic = () => {
     Alert90s.fire({
@@ -299,9 +320,10 @@ function App() {
   return (
     <div className="container">
       <header className="header">
-        <div className="header-title-wrapper">
+        <div className="header-title-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
           <img src="/alert90s.webp" alt="Alert90s Logo" className="header-logo" />
           <h1>Alert90s Documentation</h1>
+          <div id="docs-theme-toggle" ref={themeToggleRef} style={{ marginLeft: "auto" }}></div>
         </div>
         <p><marquee scrollamount="10" scrolldelay="0">A "Neo Brutalism 90s" style JS alert library. Completely standalone and dependency-free.</marquee></p>
         <div className="install-box">

@@ -38,11 +38,19 @@
         transform: translate(4px, 4px);
       }
       h1 { width: 100%; border-bottom: 4px solid #000; padding-bottom: 1rem; }
+      
+      body.dark-mode {
+        background-color: #2a2a35;
+        color: #eaeaea;
+      }
+      body.dark-mode h1 { border-bottom-color: #eaeaea; }
+      body.dark-mode button { background: #1a1a24; color: #fff; border-color: #000; }
     </style>
     <!-- Include the compiled library for testing -->
     <script src="./dist/alert90s.min.js"></script>
   </head>
   <body>
+    <div id="theme-switcher" style="position: absolute; top: 1rem; right: 1rem;"></div>
     <h1>Alert90s Advanced Features</h1>
     
     <button id="btn-basic">1. Basic Message</button>
@@ -82,6 +90,21 @@
     <button id="btn-info">Show Info Alert</button>
 
     <script>
+      // Global Theme Setup for Testing
+      window.alert90sTheme = 'light';
+      Alert90s.renderThemeToggle('#theme-switcher', {
+        width: '120px',
+        onChange: (isDark) => {
+          window.alert90sTheme = isDark ? 'dark' : 'light';
+          if (isDark) document.body.classList.add('dark-mode');
+          else document.body.classList.remove('dark-mode');
+        }
+      });
+      const originalFire = Alert90s.fire;
+      Alert90s.fire = (opts) => originalFire.call(Alert90s, { theme: window.alert90sTheme, ...opts });
+      const originalShow = Alert90s.show;
+      Alert90s.show = (opts) => originalShow.call(Alert90s, { theme: window.alert90sTheme, ...opts });
+
       // 1. Basic Message
       document.getElementById("btn-basic").addEventListener("click", () => {
         Alert90s.fire({

@@ -168,6 +168,7 @@ class Alert90s {
         
         // Display options
         dir: options.dir || 'auto', // 'rtl', 'ltr', 'auto'
+        theme: options.theme || 'light', // 'light', 'dark', 'auto'
         
         // Animations
         showClass: options.showClass || { popup: 'alert90s-pop-in' },
@@ -203,6 +204,14 @@ class Alert90s {
       const box = document.createElement('div');
       box.className = 'alert90s-box';
       if (config.toast) box.classList.add('alert90s-toast');
+      
+      let resolvedTheme = config.theme;
+      if (resolvedTheme === 'auto') {
+        resolvedTheme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      if (resolvedTheme === 'dark') {
+        box.classList.add('alert90s-dark');
+      }
       
       // RTL support
       if (document.dir === 'rtl' || config.dir === 'rtl' || config.position.includes('start')) {
@@ -745,6 +754,97 @@ class Alert90s {
              this._tooltipEl.classList.remove('show');
         }
     }, 10);
+  }
+
+  /**
+   * Renders a Neo-Brutalist Theme Switcher into a target container.
+   * Useful for documentations or retro-styled portfolios.
+   */
+  static renderThemeToggle(selector, options = {}) {
+    const el = document.querySelector(selector);
+    if (!el) return null;
+
+    const width = options.width || "100%";
+    const isDark = options.isDark || false;
+
+    const svgHtml = `
+      <label class="alert90s-theme-wrapper" aria-label="Neo Brutalist Theme Switcher" style="width: ${width}; height: auto; aspect-ratio: 5 / 2;">
+          <input type="checkbox" class="alert90s-theme-checkbox" ${isDark ? 'checked' : ''} />
+          
+          <svg viewBox="0 0 300 120" style="width: 100%; height: 100%; overflow: visible;">
+              <!-- HARD OFFSET SHADOW -->
+              <rect class="alert90s-theme-track-shadow" x="18" y="18" width="280" height="100" />
+              <!-- MAIN TRACK -->
+              <rect class="alert90s-theme-track-base" x="10" y="10" width="280" height="100" />
+
+              <!-- DECORATIVE 90S UI ELEMENTS -->
+              <g class="alert90s-theme-deco-elements" stroke="#000" stroke-width="2">
+                  <circle cx="25" cy="25" r="4" fill="#FFF" />
+                  <line x1="23" y1="23" x2="27" y2="27" />
+                  <circle cx="275" cy="25" r="4" fill="#FFF" />
+                  <line x1="273" y1="27" x2="277" y2="23" />
+                  <circle cx="25" cy="95" r="4" fill="#FFF" />
+                  <line x1="23" y1="95" x2="27" y2="95" />
+                  <circle cx="275" cy="95" r="4" fill="#FFF" />
+                  <line x1="275" y1="93" x2="275" y2="97" />
+                  
+                  <line x1="120" y1="20" x2="120" y2="35" stroke-width="3" />
+                  <line x1="128" y1="20" x2="128" y2="35" stroke-width="5" />
+                  <line x1="138" y1="20" x2="138" y2="35" stroke-width="2" />
+                  <line x1="145" y1="20" x2="145" y2="35" stroke-width="6" />
+              </g>
+
+              <!-- DAY / NIGHT TEXT -->
+              <text class="alert90s-theme-text-label alert90s-theme-text-night" x="40" y="75">NIGHT</text>
+              <text class="alert90s-theme-text-label alert90s-theme-text-day" x="190" y="75">DAY</text>
+
+              <!-- NEON DECORATIVE STICKER -->
+              <rect class="alert90s-theme-deco-accent" x="120" y="85" width="60" height="15" stroke="#000" stroke-width="3" />
+              <text x="125" y="96" font-size="10" font-weight="bold" fill="#000" font-family="sans-serif">SYS.UI</text>
+
+              <!-- SLIDING THUMB GROUP -->
+              <g class="alert90s-theme-thumb-group">
+                  <!-- Thumb Shadow -->
+                  <rect class="alert90s-theme-thumb-shadow" x="23" y="23" width="80" height="80" />
+                  <!-- Thumb Body -->
+                  <rect class="alert90s-theme-thumb-body" x="15" y="15" width="80" height="80" />
+                  
+                  <!-- SUN ICON -->
+                  <g class="alert90s-theme-icon-sun">
+                      <rect x="40" y="40" width="30" height="30" fill="#facc15" stroke="#000" stroke-width="4" />
+                      <rect x="48" y="48" width="14" height="14" fill="#ef4444" stroke="#000" stroke-width="2" />
+                      <rect x="50" y="20" width="10" height="10" fill="#ef4444" stroke="#000" stroke-width="4" />
+                      <rect x="50" y="80" width="10" height="10" fill="#ef4444" stroke="#000" stroke-width="4" />
+                      <rect x="20" y="50" width="10" height="10" fill="#ef4444" stroke="#000" stroke-width="4" />
+                      <rect x="80" y="50" width="10" height="10" fill="#ef4444" stroke="#000" stroke-width="4" />
+                      <rect x="25" y="25" width="10" height="10" fill="#facc15" stroke="#000" stroke-width="4" />
+                      <rect x="75" y="25" width="10" height="10" fill="#facc15" stroke="#000" stroke-width="4" />
+                      <rect x="25" y="75" width="10" height="10" fill="#facc15" stroke="#000" stroke-width="4" />
+                      <rect x="75" y="75" width="10" height="10" fill="#facc15" stroke="#000" stroke-width="4" />
+                  </g>
+
+                  <!-- MOON ICON -->
+                  <g class="alert90s-theme-icon-moon">
+                      <path fill="#000" transform="translate(3, 3)" d="M 60 30 v -5 h 10 v 5 h 5 v 10 h 5 v 30 h -5 v 10 h -5 v 5 h -10 v -5 h -5 v -5 h 5 v -5 h 5 v -20 h -5 v -5 h -5 v -10 h 5 v -5 Z" />
+                      <path fill="#00FFFF" stroke="#000" stroke-width="3" stroke-linejoin="miter" d="M 60 30 v -5 h 10 v 5 h 5 v 10 h 5 v 30 h -5 v 10 h -5 v 5 h -10 v -5 h -5 v -5 h 5 v -5 h 5 v -20 h -5 v -5 h -5 v -10 h 5 v -5 Z" />
+                      <rect x="70" y="40" width="5" height="5" fill="#FFFFFF" opacity="0.8" />
+                      <rect x="65" y="70" width="5" height="5" fill="#FFFFFF" opacity="0.8" />
+                  </g>
+              </g>
+          </svg>
+      </label>
+    `;
+
+    el.innerHTML = svgHtml;
+    const checkbox = el.querySelector('.alert90s-theme-checkbox');
+    
+    checkbox.addEventListener('change', (e) => {
+       if (typeof options.onChange === 'function') {
+           options.onChange(e.target.checked);
+       }
+    });
+
+    return el;
   }
 }
 

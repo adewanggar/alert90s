@@ -783,4 +783,74 @@ td {
   }
 }
 
+/* =========================================
+   DARK MODE OVERRIDES
+   ========================================= */
+body.dark {
+  background-color: #2a2a35;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1.5px, transparent 0);
+  color: #eaeaea;
+}
 
+body.dark .header {
+  background: #6b21a8;
+}
+
+body.dark .sidebar,
+body.dark .content,
+body.dark .card,
+body.dark .feature-card {
+  background: #1e1e26;
+  color: #eaeaea;
+}
+
+body.dark .card h3,
+body.dark .doc-section h2 {
+  border-bottom-color: #555;
+}
+
+body.dark .tab-btn,
+body.dark .mobile-menu-btn,
+body.dark .mobile-close-btn,
+body.dark .copy-btn,
+body.dark .card button:not(.support-btn) {
+  background: #1a1a24;
+  color: #fff;
+}
+
+body.dark .tab-btn.active {
+  background: #4ade80;
+  color: #000;
+}
+
+body.dark .code-block {
+  background: #0d0d14;
+}
+
+body.dark .code-header {
+  background: #15151e;
+  border-bottom-color: #000;
+}
+
+body.dark .table-responsive th {
+  background: #6b21a8;
+  color: #fff;
+}
+
+body.dark .table-responsive td {
+  border-bottom-color: #444;
+}
+
+body.dark pre::-webkit-scrollbar-thumb {
+  background: #555;
+}
+
+body.dark .sidebar ul li a {
+  color: #eaeaea;
+}
+
+body.dark .sidebar ul li a:hover,
+body.dark .sidebar ul li a.active {
+  background: #6b21a8;
+  color: #fff;
+}
