@@ -216,6 +216,12 @@ body {
   box-shadow: 0 0 0 0 #000;
 }
 
+.sidebar a.active {
+  background: #b4fa72;
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 0 #000;
+}
+
 .content {
   flex: 1;
   min-width: 0;
@@ -796,6 +802,16 @@ body.dark .header {
   background: #6b21a8;
 }
 
+body.dark .header h1 {
+  text-shadow: 4px 4px 0 #000, 8px 8px 0 #00f0ff;
+  color: #fff;
+}
+
+body.dark .header p {
+  background: #1a1a24;
+  color: #eaeaea;
+}
+
 body.dark .sidebar,
 body.dark .content,
 body.dark .card,
@@ -804,9 +820,15 @@ body.dark .feature-card {
   color: #eaeaea;
 }
 
-body.dark .card h3,
-body.dark .doc-section h2 {
+body.dark .card h3 {
   border-bottom-color: #555;
+  color: #000;
+}
+
+body.dark .doc-section h2,
+body.dark .methods-list li {
+  border-bottom-color: #555;
+  color: #eaeaea;
 }
 
 body.dark .tab-btn,
@@ -837,12 +859,29 @@ body.dark .table-responsive th {
   color: #fff;
 }
 
+body.dark table {
+  background: #1a1a24;
+}
+
 body.dark .table-responsive td {
   border-bottom-color: #444;
+  color: #eaeaea;
+  background: #1a1a24;
+}
+
+body.dark .methods-list {
+  background: #1e1e26;
+  border-color: #000;
+  color: #eaeaea;
 }
 
 body.dark pre::-webkit-scrollbar-thumb {
   background: #555;
+}
+
+body.dark .sidebar a {
+  background: #1a1a24;
+  border-color: #000;
 }
 
 body.dark .sidebar ul li a {
@@ -853,4 +892,61 @@ body.dark .sidebar ul li a:hover,
 body.dark .sidebar ul li a.active {
   background: #6b21a8;
   color: #fff;
+}
+
+body.dark p,
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5,
+body.dark h6,
+body.dark li {
+  color: #eaeaea;
+}
+
+body.dark .doc-section h2 {
+  background: #000;
+  color: #b4fa72;
+}
+
+body.dark .doc-section h3 {
+  background: #000;
+  color: #00f0ff;
+  border-color: #555;
+}
+
+body.dark .doc-section p {
+  background: #1a1a24;
+  border-color: #555;
+}
+
+body.dark .icon-item {
+  color: #000;
+}
+
+body.dark a {
+  color: #a78bfa;
+}
+
+body.dark a:hover {
+  color: #c4b5fd;
+}
+
+body.dark a.support-btn {
+  color: #000;
+}
+
+body.dark code {
+  color: #fca5a5;
+  background: #2a2a35;
+}
+
+body.dark pre {
+  border-color: #000;
+}
+
+body.dark pre code {
+  color: #a78bfa;
+  background: transparent;
 }

@@ -33,7 +33,28 @@ function CodeBlock({ title, code }) {
 function App() {
   const [activeTab, setActiveTab] = useState('alerts');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState('');
   const themeToggleRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: '-20% 0px -70% 0px' }
+    );
+
+    const sections = document.querySelectorAll('.doc-section');
+    sections.forEach((s) => observer.observe(s));
+
+    return () => {
+      sections.forEach((s) => observer.unobserve(s));
+    };
+  }, []);
 
   useEffect(() => {
     // Configure default alert theme tracking
@@ -351,17 +372,17 @@ function App() {
           <ul onClick={(e) => {
             if(e.target.tagName === 'A') setIsSidebarOpen(false);
           }}>
-            <li><a href="#installation">Installation</a></li>
-            <li><a href="#usage">Usage</a></li>
-            <li><a href="#examples">Examples</a></li>
-            <li><a href="#configuration">Configuration Params</a></li>
-            <li><a href="#buttons">Handling Buttons</a></li>
-            <li><a href="#css-buttons">CSS Buttons</a></li>
-            <li><a href="#tooltips">Tooltips / Popovers</a></li>
-            <li><a href="#dismissals">Handling Dismissals</a></li>
-            <li><a href="#icons">Icons</a></li>
-            <li><a href="#inputs">Input Types</a></li>
-            <li><a href="#methods">Methods</a></li>
+            <li><a href="#installation" className={activeSection === 'installation' ? 'active' : ''}>Installation</a></li>
+            <li><a href="#usage" className={activeSection === 'usage' ? 'active' : ''}>Usage</a></li>
+            <li><a href="#examples" className={activeSection === 'examples' ? 'active' : ''}>Examples</a></li>
+            <li><a href="#configuration" className={activeSection === 'configuration' ? 'active' : ''}>Configuration Params</a></li>
+            <li><a href="#buttons" className={activeSection === 'buttons' ? 'active' : ''}>Handling Buttons</a></li>
+            <li><a href="#css-buttons" className={activeSection === 'css-buttons' ? 'active' : ''}>CSS Buttons</a></li>
+            <li><a href="#tooltips" className={activeSection === 'tooltips' ? 'active' : ''}>Tooltips / Popovers</a></li>
+            <li><a href="#dismissals" className={activeSection === 'dismissals' ? 'active' : ''}>Handling Dismissals</a></li>
+            <li><a href="#icons" className={activeSection === 'icons' ? 'active' : ''}>Icons</a></li>
+            <li><a href="#inputs" className={activeSection === 'inputs' ? 'active' : ''}>Input Types</a></li>
+            <li><a href="#methods" className={activeSection === 'methods' ? 'active' : ''}>Methods</a></li>
           </ul>
         </nav>
 
