@@ -152,7 +152,10 @@ class Alert90s {
         imageAlt: options.imageAlt || '',
         
         // Input
-        input: options.input || null, // 'text', 'email', 'password', 'number', 'tel', 'url', 'textarea'
+        input: options.input || null,
+        inputPlaceholder: options.inputPlaceholder || '',
+        inputValue: options.inputValue || '',
+        inputOptions: options.inputOptions || {},
         inputAttributes: options.inputAttributes || {},
         showLoaderOnConfirm: options.showLoaderOnConfirm || false,
         preConfirm: options.preConfirm || null,
@@ -398,27 +401,95 @@ class Alert90s {
 
       // Input form
       let inputEl = null;
+
       if (config.input) {
         const inputContainer = document.createElement('div');
         inputContainer.className = 'alert90s-input-container';
-        
-        if (config.input === 'textarea') {
+
+        if (config.input === 'select') {
+          inputEl = document.createElement('select');
+          inputEl.className = 'alert90s-input alert90s-select';
+          if (config.inputPlaceholder) {
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = '';
+            defaultOpt.textContent = config.inputPlaceholder;
+            defaultOpt.disabled = true;
+            defaultOpt.selected = true;
+            inputEl.appendChild(defaultOpt);
+          }
+          for (const [val, text] of Object.entries(config.inputOptions)) {
+            const opt = document.createElement('option');
+            opt.value = val;
+            opt.textContent = text;
+            if (val === config.inputValue) opt.selected = true;
+            inputEl.appendChild(opt);
+          }
+          inputContainer.appendChild(inputEl);
+        } else if (config.input === 'radio') {
+          const radioGroup = document.createElement('div');
+          radioGroup.className = 'alert90s-radio-group';
+          for (const [val, text] of Object.entries(config.inputOptions)) {
+            const label = document.createElement('label');
+            label.className = 'alert90s-radio-label';
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = 'alert90s-radio';
+            radio.value = val;
+            if (val === config.inputValue) radio.checked = true;
+            const span = document.createElement('span');
+            span.textContent = text;
+            label.appendChild(radio);
+            label.appendChild(span);
+            radioGroup.appendChild(label);
+          }
+          inputEl = radioGroup; // Parent serves as reference
+          inputContainer.appendChild(radioGroup);
+        } else if (config.input === 'checkbox' || config.input === 'toggle') {
+          const label = document.createElement('label');
+          label.className = config.input === 'toggle' ? 'alert90s-toggle-label' : 'alert90s-checkbox-label';
+          inputEl = document.createElement('input');
+          inputEl.type = 'checkbox';
+          inputEl.checked = !!config.inputValue;
+          
+          if (config.input === 'toggle') {
+             const slider = document.createElement('div');
+             slider.className = 'alert90s-toggle-slider';
+             label.appendChild(inputEl);
+             label.appendChild(slider);
+             if (config.inputPlaceholder) {
+                const span = document.createElement('span');
+                span.textContent = config.inputPlaceholder;
+                label.appendChild(span);
+             }
+          } else {
+             const span = document.createElement('span');
+             span.textContent = config.inputPlaceholder || 'Check me';
+             label.appendChild(inputEl);
+             label.appendChild(span);
+          }
+          inputContainer.appendChild(label);
+        } else if (config.input === 'textarea') {
           inputEl = document.createElement('textarea');
+          inputEl.className = 'alert90s-input';
+          if (config.inputPlaceholder) inputEl.placeholder = config.inputPlaceholder;
+          if (config.inputValue) inputEl.value = config.inputValue;
+          inputContainer.appendChild(inputEl);
         } else {
           inputEl = document.createElement('input');
           inputEl.type = config.input;
+          inputEl.className = 'alert90s-input';
+          if (config.inputPlaceholder) inputEl.placeholder = config.inputPlaceholder;
+          if (config.inputValue) inputEl.value = config.inputValue;
+          inputContainer.appendChild(inputEl);
         }
         
-        inputEl.className = 'alert90s-input';
-        
-        // Apply custom attributes
-        if (config.inputAttributes) {
+        // Apply custom attributes (for non-grouped inputs)
+        if (config.inputAttributes && inputEl && !['radio'].includes(config.input)) {
           for (const [key, val] of Object.entries(config.inputAttributes)) {
             inputEl.setAttribute(key, val);
           }
         }
         
-        inputContainer.appendChild(inputEl);
         bodyContainer.appendChild(inputContainer);
       }
 
@@ -463,8 +534,13 @@ class Alert90s {
       const handleConfirm = async () => {
         let val = true;
         
-        if (inputEl) {
-          val = inputEl.value;
+        if (config.input === 'radio') {
+           const checked = inputEl.querySelector('input[type="radio"]:checked');
+           val = checked ? checked.value : null;
+        } else if (config.input === 'checkbox' || config.input === 'toggle') {
+           val = inputEl.checked;
+        } else if (inputEl) {
+           val = inputEl.value;
         }
 
         if (config.preConfirm) {

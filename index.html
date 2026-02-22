@@ -67,6 +67,13 @@
     <button id="btn-loading-blink">20. Blinking Loader</button>
     <button id="btn-loading-prog">21. Progress Loader</button>
     <button id="btn-toast-spam">22. Spam Toasts (Stacking)</button>
+
+    <div style="width: 100%; height: 1px; background: #000; margin: 1rem 0;"></div>
+
+    <button id="btn-input-select">23. Select Input</button>
+    <button id="btn-input-radio">24. Radio Input</button>
+    <button id="btn-input-checkbox">25. Checkbox Input</button>
+    <button id="btn-input-toggle">26. Toggle Input</button>
     
     <div style="width: 100%; height: 1px; background: #000; margin: 1rem 0;"></div>
     
@@ -415,6 +422,62 @@
             });
           }, i * 300);
         }
+      });
+
+      // 23. Select Input
+      document.getElementById("btn-input-select").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "CHOOSE WEAPON",
+          input: "select",
+          inputPlaceholder: "-- Select Item --",
+          inputOptions: {
+            'bfg': 'BFG 9000',
+            'plasma': 'Plasma Rifle',
+            'shotgun': 'Super Shotgun'
+          }
+        }).then(res => {
+          if(res.isConfirmed) Alert90s.fire("Equipped:", res.value || "Fists", "success");
+        });
+      });
+
+      // 24. Radio Input
+      document.getElementById("btn-input-radio").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "DIFFICULTY",
+          input: "radio",
+          inputOptions: {
+            'easy': 'I\'m too young to die.',
+            'medium': 'Hurt me plenty.',
+            'hard': 'Ultra-Violence.'
+          },
+          inputValue: 'hard'
+        }).then(res => {
+          if(res.isConfirmed) Alert90s.fire("Selection:", res.value, "info");
+        });
+      });
+
+      // 25. Checkbox Input
+      document.getElementById("btn-input-checkbox").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "EULA",
+          text: "I have read the Terms and Conditions.",
+          input: "checkbox",
+          inputPlaceholder: "I Agree"
+        }).then(res => {
+          if(res.isConfirmed) Alert90s.fire("Status:", res.value ? "Agreed" : "Declined", "warning");
+        });
+      });
+
+      // 26. Toggle Input
+      document.getElementById("btn-input-toggle").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "SETTINGS",
+          input: "toggle",
+          inputPlaceholder: "God Mode",
+          inputValue: true
+        }).then(res => {
+          if(res.isConfirmed) Alert90s.fire("God Mode:", res.value ? "ENABLED" : "DISABLED", "success");
+        });
       });
 
       // Legacy API tests

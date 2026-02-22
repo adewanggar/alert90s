@@ -174,30 +174,34 @@ If you'd like to collaborate or just say hi, visit my [Portfolio Website](https:
 
 ## Advanced Options
 
-| Option            | Type     | Default     | Description                                                       |
-| ----------------- | -------- | ----------- | ----------------------------------------------------------------- |
-| background        | String   | ''          | Custom background color for the modal.                            |
-| color             | String   | ''          | Custom text color for the modal body.                             |
-| titleColor        | String   | ''          | Custom title color.                                               |
-| iconColor         | String   | ''          | Custom icon color (including SVG stroke).                         |
-| title             | String   | ''          | The title of the alert. Supports HTML.                            |
-| text/message      | String   | ''          | The message body of the alert.                                    |
-| html              | String   | ''          | A custom HTML description for the alert.                          |
-| icon              | String   | ''          | Standard icons: `warning`, `error`, `info`, `success`, `question` |
-| iconHtml          | String   | ''          | Custom HTML string for the icon.                                  |
-| footer            | String   | ''          | Custom HTML for the footer section.                               |
-| imageUrl          | String   | ''          | URL for an image to display.                                      |
-| input             | String   | null        | Type of input: `text`, `password`, `email`, `textarea`, etc.      |
-| dir               | String   | 'auto'      | Text direction. Set `rtl` for Arabic/Hebrew.                      |
-| position          | String   | 'center'    | `top`, `top-end`, `bottom-start`, etc.                            |
-| timer             | Number   | null        | Auto close timer in milliseconds.                                 |
-| timerProgressBar  | Boolean  | false       | Display progress bar at the bottom.                               |
-| toast             | Boolean  | false       | Display the alert as a non-blocking toast notification.           |
-| loaderType        | String   | 'hourglass' | Type of loader: `hourglass`, `ascii`, `blinking`, `progress`.     |
-| draggable         | Boolean  | false       | Allow moving the modal dragging its header.                       |
-| showDenyButton    | Boolean  | false       | Show the third middle deny button.                                |
-| preConfirm        | Function | null        | Async function executed before confirm executes.                  |
-| allowOutsideClick | Function | null        | Async function executed before confirm executes.                  |
+| Option            | Type     | Default     | Description                                                                                               |
+| ----------------- | -------- | ----------- | --------------------------------------------------------------------------------------------------------- |
+| background        | String   | ''          | Custom background color for the modal.                                                                    |
+| color             | String   | ''          | Custom text color for the modal body.                                                                     |
+| titleColor        | String   | ''          | Custom title color.                                                                                       |
+| iconColor         | String   | ''          | Custom icon color (including SVG stroke).                                                                 |
+| title             | String   | ''          | The title of the alert. Supports HTML.                                                                    |
+| text/message      | String   | ''          | The message body of the alert.                                                                            |
+| html              | String   | ''          | A custom HTML description for the alert.                                                                  |
+| icon              | String   | ''          | Standard icons: `warning`, `error`, `info`, `success`, `question`                                         |
+| iconHtml          | String   | ''          | Custom HTML string for the icon.                                                                          |
+| footer            | String   | ''          | Custom HTML for the footer section.                                                                       |
+| imageUrl          | String   | ''          | URL for an image to display.                                                                              |
+| input             | String   | null        | Generate an input: `'text'`, `'password'`, `'textarea'`, `'select'`, `'radio'`, `'checkbox'`, `'toggle'`. |
+| inputPlaceholder  | String   | ''          | Placeholder text or label for `checkbox`/`toggle`.                                                        |
+| inputValue        | String   | ''          | Initial value or checked state (for boolean inputs).                                                      |
+| inputOptions      | Object   | {}          | Object mapping `{value: 'Label'}` for `select`/`radio`.                                                   |
+| inputAttributes   | Object   | {}          | Custom HTML attributes for the input element.                                                             |
+| dir               | String   | 'auto'      | Text direction. Set `rtl` for Arabic/Hebrew.                                                              |
+| position          | String   | 'center'    | `top`, `top-end`, `bottom-start`, etc.                                                                    |
+| timer             | Number   | null        | Auto close timer in milliseconds.                                                                         |
+| timerProgressBar  | Boolean  | false       | Display progress bar at the bottom.                                                                       |
+| toast             | Boolean  | false       | Display the alert as a non-blocking toast notification.                                                   |
+| loaderType        | String   | 'hourglass' | Type of loader: `hourglass`, `ascii`, `blinking`, `progress`.                                             |
+| draggable         | Boolean  | false       | Allow moving the modal dragging its header.                                                               |
+| showDenyButton    | Boolean  | false       | Show the third middle deny button.                                                                        |
+| preConfirm        | Function | null        | Async function executed before confirm executes.                                                          |
+| allowOutsideClick | Function | null        | Async function executed before confirm executes.                                                          |
 
 ## Methods
 

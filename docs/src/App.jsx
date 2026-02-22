@@ -384,6 +384,12 @@ Alert90s.fire('Hello world!');`}
               >
                 Loaders
               </button>
+              <button 
+                className={`tab-btn ${activeTab === 'inputs' ? 'active' : ''}`} 
+                onClick={() => setActiveTab('inputs')}
+              >
+                Inputs
+              </button>
             </div>
 
             {activeTab === 'alerts' && (
@@ -710,6 +716,107 @@ Alert90s.fire({
                 </div>
               </div>
             )}
+
+            {activeTab === 'inputs' && (
+              <div className="grid">
+                <div className="card">
+                  <h3>Select Dropdown</h3>
+                  <button onClick={() => {
+                    Alert90s.fire({
+                      title: "SELECT DRIVE",
+                      input: "select",
+                      inputPlaceholder: "-- Choose a Drive --",
+                      inputOptions: {
+                        'A:': 'Floppy Disk (A:)',
+                        'C:': 'Local Disk (C:)',
+                        'D:': 'CD-ROM (D:)'
+                      }
+                    }).then(res => {
+                       if (res.isConfirmed) Alert90s.fire("Selected:", res.value || "None", "success");
+                    });
+                  }}>Try me!</button>
+                  <CodeBlock code={`Alert90s.fire({
+  title: "SELECT DRIVE",
+  input: "select",
+  inputPlaceholder: "-- Choose a Drive --",
+  inputOptions: {
+    'A:': 'Floppy Disk (A:)',
+    'C:': 'Local Disk (C:)',
+    'D:': 'CD-ROM (D:)'
+  }
+})`} />
+                </div>
+
+                <div className="card">
+                  <h3>Radio Buttons</h3>
+                  <button onClick={() => {
+                    Alert90s.fire({
+                      title: "CHOOSE DIFFICULTY",
+                      input: "radio",
+                      inputOptions: {
+                        'easy': 'I\'m too young to die.',
+                        'medium': 'Hurt me plenty.',
+                        'hard': 'Ultra-Violence.'
+                      },
+                      inputValue: 'medium'
+                    }).then(res => {
+                       if (res.isConfirmed) Alert90s.fire("Difficulty:", res.value || "None", "info");
+                    });
+                  }}>Try me!</button>
+                  <CodeBlock code={`Alert90s.fire({
+  title: "CHOOSE DIFFICULTY",
+  input: "radio",
+  inputOptions: {
+    'easy': "I'm too young to die.",
+    'medium': "Hurt me plenty.",
+    'hard': "Ultra-Violence."
+  },
+  inputValue: 'medium'
+})`} />
+                </div>
+
+                <div className="card">
+                  <h3>Checkbox</h3>
+                  <button onClick={() => {
+                    Alert90s.fire({
+                      title: "TERMS OF SERVICE",
+                      text: "Do you agree to surrender your soul to the machine?",
+                      input: "checkbox",
+                      inputPlaceholder: "I agree.",
+                      inputValue: false
+                    }).then(res => {
+                       if (res.isConfirmed) Alert90s.fire("Status", res.value ? "AGREED" : "DECLINED", "warning");
+                    });
+                  }}>Try me!</button>
+                  <CodeBlock code={`Alert90s.fire({
+  title: "TERMS OF SERVICE",
+  input: "checkbox",
+  inputPlaceholder: "I agree.",
+  inputValue: false
+})`} />
+                </div>
+
+                <div className="card">
+                  <h3>Toggle Switch</h3>
+                  <button onClick={() => {
+                    Alert90s.fire({
+                      title: "SYSTEM SETTINGS",
+                      input: "toggle",
+                      inputPlaceholder: "Enable Turbo Mode",
+                      inputValue: true
+                    }).then(res => {
+                       if (res.isConfirmed) Alert90s.fire("Turbo Mode", res.value ? "ON" : "OFF", "success");
+                    });
+                  }}>Try me!</button>
+                  <CodeBlock code={`Alert90s.fire({
+  title: "SYSTEM SETTINGS",
+  input: "toggle",
+  inputPlaceholder: "Enable Turbo Mode",
+  inputValue: true
+})`} />
+                </div>
+              </div>
+            )}
           </section>
 
           <section id="configuration" className="doc-section">
@@ -729,8 +836,11 @@ Alert90s.fire({
                   <tr><td>title</td><td>String</td><td>''</td><td>The title of the alert.</td></tr>
                   <tr><td>text / message</td><td>String</td><td>''</td><td>The message body.</td></tr>
                   <tr><td>html</td><td>String</td><td>''</td><td>A custom HTML description.</td></tr>
-                  <tr><td>icon</td><td>String</td><td>''</td><td>Standard icon: warning, error, info, success, question.</td></tr>
-                  <tr><td>iconHtml</td><td>String</td><td>''</td><td>Custom HTML string for the icon.</td></tr>
+                  <tr><td>input</td><td>String</td><td>null</td><td>'text', 'password', 'textarea', 'select', 'radio', 'checkbox', 'toggle'.</td></tr>
+                  <tr><td>inputPlaceholder</td><td>String</td><td>''</td><td>Placeholder text or label for checkbox/toggle.</td></tr>
+                  <tr><td>inputValue</td><td>String/Bool</td><td>''</td><td>Initial value or checked state.</td></tr>
+                  <tr><td>inputOptions</td><td>Object</td><td>{`{}`}</td><td>Object mapping <code>{`{value: 'Label'}`}</code> for select/radio.</td></tr>
+                  <tr><td>inputAttributes</td><td>Object</td><td>{`{}`}</td><td>Custom HTML attributes for the input element.</td></tr>
                   <tr><td>imageUrl</td><td>String</td><td>''</td><td>URL for an image to display.</td></tr>
                   <tr><td>timer</td><td>Number</td><td>null</td><td>Auto close timer in milliseconds.</td></tr>
                   <tr><td>timerProgressBar</td><td>Boolean</td><td>false</td><td>Show progress bar for timer.</td></tr>
