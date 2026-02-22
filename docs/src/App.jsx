@@ -344,7 +344,7 @@ function App() {
         <div className="header-title-wrapper" style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap' }}>
           <img src="/alert90s.webp" alt="Alert90s Logo" className="header-logo" />
           <h1>Alert90s Documentation</h1>
-          <div id="docs-theme-toggle" ref={themeToggleRef} style={{ marginLeft: "auto" }}></div>
+          <div id="docs-theme-toggle" ref={themeToggleRef}></div>
         </div>
         <p><marquee scrollamount="10" scrolldelay="0">A "Neo Brutalism 90s" style JS alert library. Completely standalone and dependency-free.</marquee></p>
         <div className="install-box">
@@ -408,6 +408,19 @@ Alert90s.fire('Hello world!');`}
           <section id="examples" className="doc-section">
             <h2>Examples</h2>
             
+            <div className="mobile-tab-dropdown">
+              <select 
+                className="mobile-tab-trigger"
+                value={activeTab} 
+                onChange={(e) => setActiveTab(e.target.value)}
+              >
+                <option value="alerts">Alerts</option>
+                <option value="toasts">Toasts</option>
+                <option value="loaders">Loaders</option>
+                <option value="inputs">Inputs</option>
+              </select>
+            </div>
+
             <div className="tab-container">
               <button 
                 className={`tab-btn ${activeTab === 'alerts' ? 'active' : ''}`} 
