@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "alert90s": "^1.0.11",
+    "alert90s": "^1.0.12",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
