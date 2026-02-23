@@ -82,6 +82,27 @@ function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
   const themeToggleRef = useRef(null);
+  const tabSelectRef = useRef(null);
+
+  useEffect(() => {
+    if (tabSelectRef.current) {
+      // Clear container just in case (React StrictMode double mount)
+      tabSelectRef.current.innerHTML = '';
+      const inst = Alert90s.renderSelect(tabSelectRef.current, {
+        placeholder: 'SELECT CATEGORY',
+        options: {
+          'alerts': 'Alerts',
+          'toasts': 'Toasts',
+          'loaders': 'Loaders',
+          'inputs': 'Inputs',
+          'components': 'Components'
+        },
+        value: activeTab,
+        onChange: (val) => setActiveTab(val)
+      });
+      return () => { if (inst) inst.destroy(); };
+    }
+  }, []); // Mount once
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -455,53 +476,10 @@ Alert90s.fire('Hello world!');`}
           <section id="examples" className="doc-section">
             <h2>Examples</h2>
             
-            <div className="mobile-tab-dropdown">
-              <select 
-                className="mobile-tab-trigger"
-                value={activeTab} 
-                onChange={(e) => setActiveTab(e.target.value)}
-              >
-                <option value="alerts">Alerts</option>
-                <option value="toasts">Toasts</option>
-                <option value="loaders">Loaders</option>
-                <option value="inputs">Inputs</option>
-                <option value="components">Components</option>
-              </select>
+            <div className="tab-dropdown">
+              <label htmlFor="example-category-select">Select Category: </label>
+              <div id="example-category-select" ref={tabSelectRef} className="tab-dropdown-select"></div>
             </div>
-
-            <div className="tab-container">
-              <button 
-                className={`tab-btn ${activeTab === 'alerts' ? 'active' : ''}`} 
-                onClick={() => setActiveTab('alerts')}
-              >
-                Alerts
-              </button>
-              <button 
-                className={`tab-btn ${activeTab === 'toasts' ? 'active' : ''}`} 
-                onClick={() => setActiveTab('toasts')}
-              >
-                Toasts
-              </button>
-              <button 
-                className={`tab-btn ${activeTab === 'loaders' ? 'active' : ''}`} 
-                onClick={() => setActiveTab('loaders')}
-              >
-                Loaders
-              </button>
-              <button 
-                className={`tab-btn ${activeTab === 'inputs' ? 'active' : ''}`} 
-                onClick={() => setActiveTab('inputs')}
-              >
-                Inputs
-              </button>
-              <button 
-                className={`tab-btn ${activeTab === 'components' ? 'active' : ''}`} 
-                onClick={() => setActiveTab('components')}
-              >
-                Components
-              </button>
-            </div>
-
             {activeTab === 'alerts' && (
               <div className="grid">
                 <div className="card">
