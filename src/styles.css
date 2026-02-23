@@ -273,36 +273,69 @@ select.alert90s-select {
   box-shadow: inset 0 0 0 4px #fff;
 }
 
-/* Checkbox */
+/* Checkbox (SVG Brutalist) */
 .alert90s-checkbox-label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  font-weight: bold;
   cursor: pointer;
+  font-weight: bold;
   font-size: 1rem;
+  user-select: none;
+  position: relative;
 }
 .alert90s-checkbox-label input[type="checkbox"] {
-  appearance: none;
-  width: 1.25rem;
-  height: 1.25rem;
-  border: 4px solid #000;
-  margin: 0;
-  cursor: pointer;
-  position: relative;
-  background-color: #f8fafc;
-}
-.alert90s-checkbox-label input[type="checkbox"]:checked {
-  background-color: #000;
-}
-.alert90s-checkbox-label input[type="checkbox"]:checked::after {
-  content: '✔';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: #fff;
-  font-size: 0.8rem;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+.alert90s-cb-svg {
+  overflow: visible;
+  transition: transform 0.1s ease;
+}
+.alert90s-checkbox-label:hover .alert90s-cb-svg {
+  transform: translate(-2px, -2px);
+}
+.alert90s-checkbox-label:active .alert90s-cb-svg {
+  transform: translate(2px, 2px);
+}
+.cb-box {
+  transition: fill 0.1s ease;
+}
+.alert90s-checkbox-label input[type="checkbox"]:checked ~ .alert90s-cb-svg .cb-box {
+  fill: #ffffff;
+}
+.cb-check {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  transition: stroke-dashoffset 0.15s ease-out;
+}
+.alert90s-checkbox-label input[type="checkbox"]:checked ~ .alert90s-cb-svg .cb-check {
+  stroke-dashoffset: 0;
+}
+.alert90s-checkbox-label input[type="checkbox"]:checked ~ .alert90s-cb-svg {
+  animation: alert90s-cb-shake 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+@keyframes alert90s-cb-shake {
+  0% { transform: scale(1) translate(0, 0); }
+  30% { transform: scale(1.15) translate(-2px, -2px) rotate(-4deg); }
+  50% { transform: scale(0.95) translate(2px, 2px) rotate(3deg); }
+  75% { transform: scale(1.05) translate(-1px, -1px) rotate(-1deg); }
+  100% { transform: scale(1) translate(0, 0) rotate(0deg); }
+}
+.alert90s-cb-text {
+  transition: color 0.2s;
+}
+.alert90s-checkbox-label input[type="checkbox"]:checked ~ .alert90s-cb-text {
+  animation: alert90s-cb-bump 0.2s ease-out forwards;
+  color: #ff6b35;
+}
+@keyframes alert90s-cb-bump {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(4px); }
+  100% { transform: translateX(0); }
 }
 
 /* Toggle Switch */
@@ -503,6 +536,88 @@ select.alert90s-select {
   );
   animation: alert90s-marquee 1.5s linear infinite;
 }
+
+/* Segmented SVG Progress Bar */
+.alert90s-spinner.segmented {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+.alert90s-spinner.segmented svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Segment visibility - staggered appear */
+.a90s-seg-1 { animation: a90s-op1 6s infinite; }
+.a90s-seg-2 { animation: a90s-op2 6s infinite; }
+.a90s-seg-3 { animation: a90s-op3 6s infinite; }
+.a90s-seg-4 { animation: a90s-op4 6s infinite; }
+.a90s-seg-5 { animation: a90s-op5 6s infinite; }
+.a90s-seg-6 { animation: a90s-op6 6s infinite; }
+.a90s-seg-7 { animation: a90s-op7 6s infinite; }
+.a90s-seg-8 { animation: a90s-op8 6s infinite; }
+.a90s-seg-9 { animation: a90s-op9 6s infinite; }
+.a90s-seg-10 { animation: a90s-op10 6s infinite; }
+
+@keyframes a90s-op1  { 0%,9%  {opacity:0} 10%,92% {opacity:1} 92.1%,100% {opacity:0} }
+@keyframes a90s-op2  { 0%,17% {opacity:0} 18%,92% {opacity:1} 92.1%,100% {opacity:0} }
+@keyframes a90s-op3  { 0%,25% {opacity:0} 26%,92% {opacity:1} 92.1%,100% {opacity:0} }
+@keyframes a90s-op4  { 0%,33% {opacity:0} 34%,92% {opacity:1} 92.1%,100% {opacity:0} }
+@keyframes a90s-op5  { 0%,41% {opacity:0} 42%,92% {opacity:1} 92.1%,100% {opacity:0} }
+@keyframes a90s-op6  { 0%,49% {opacity:0} 50%,92% {opacity:1} 92.1%,100% {opacity:0} }
+@keyframes a90s-op7  { 0%,57% {opacity:0} 58%,92% {opacity:1} 92.1%,100% {opacity:0} }
+@keyframes a90s-op8  { 0%,65% {opacity:0} 66%,92% {opacity:1} 92.1%,100% {opacity:0} }
+@keyframes a90s-op9  { 0%,73% {opacity:0} 74%,92% {opacity:1} 92.1%,100% {opacity:0} }
+@keyframes a90s-op10 { 0%,81% {opacity:0} 82%,92% {opacity:1} 92.1%,100% {opacity:0} }
+
+/* Segment flash (white pop on appear) */
+.a90s-fl-1 { animation: a90s-fl1 6s infinite; }
+.a90s-fl-2 { animation: a90s-fl2 6s infinite; }
+.a90s-fl-3 { animation: a90s-fl3 6s infinite; }
+.a90s-fl-4 { animation: a90s-fl4 6s infinite; }
+.a90s-fl-5 { animation: a90s-fl5 6s infinite; }
+.a90s-fl-6 { animation: a90s-fl6 6s infinite; }
+.a90s-fl-7 { animation: a90s-fl7 6s infinite; }
+.a90s-fl-8 { animation: a90s-fl8 6s infinite; }
+.a90s-fl-9 { animation: a90s-fl9 6s infinite; }
+.a90s-fl-10 { animation: a90s-fl10 6s infinite; }
+
+@keyframes a90s-fl1  { 0%,9%  {fill:#ff6b35} 10%,13% {fill:#fff} 13.1%,100% {fill:#ff6b35} }
+@keyframes a90s-fl2  { 0%,17% {fill:#ff6b35} 18%,21% {fill:#fff} 21.1%,100% {fill:#ff6b35} }
+@keyframes a90s-fl3  { 0%,25% {fill:#ff6b35} 26%,29% {fill:#fff} 29.1%,100% {fill:#ff6b35} }
+@keyframes a90s-fl4  { 0%,33% {fill:#ff6b35} 34%,37% {fill:#fff} 37.1%,100% {fill:#ff6b35} }
+@keyframes a90s-fl5  { 0%,41% {fill:#ff6b35} 42%,45% {fill:#fff} 45.1%,100% {fill:#ff6b35} }
+@keyframes a90s-fl6  { 0%,49% {fill:#ff6b35} 50%,53% {fill:#fff} 53.1%,100% {fill:#ff6b35} }
+@keyframes a90s-fl7  { 0%,57% {fill:#ff6b35} 58%,61% {fill:#fff} 61.1%,100% {fill:#ff6b35} }
+@keyframes a90s-fl8  { 0%,65% {fill:#ff6b35} 66%,69% {fill:#fff} 69.1%,100% {fill:#ff6b35} }
+@keyframes a90s-fl9  { 0%,73% {fill:#ff6b35} 74%,77% {fill:#fff} 77.1%,100% {fill:#ff6b35} }
+@keyframes a90s-fl10 { 0%,81% {fill:#ff6b35} 82%,85% {fill:#fff} 85.1%,100% {fill:#ff6b35} }
+
+/* Percentage text visibility */
+.a90s-txt-0   { animation: a90s-t0 6s infinite; }
+.a90s-txt-10  { animation: a90s-t10 6s infinite; opacity:0; }
+.a90s-txt-20  { animation: a90s-t20 6s infinite; opacity:0; }
+.a90s-txt-30  { animation: a90s-t30 6s infinite; opacity:0; }
+.a90s-txt-40  { animation: a90s-t40 6s infinite; opacity:0; }
+.a90s-txt-50  { animation: a90s-t50 6s infinite; opacity:0; }
+.a90s-txt-60  { animation: a90s-t60 6s infinite; opacity:0; }
+.a90s-txt-70  { animation: a90s-t70 6s infinite; opacity:0; }
+.a90s-txt-80  { animation: a90s-t80 6s infinite; opacity:0; }
+.a90s-txt-90  { animation: a90s-t90 6s infinite; opacity:0; }
+.a90s-txt-100 { animation: a90s-t100 6s infinite; opacity:0; }
+
+@keyframes a90s-t0   { 0%,9.9%  {opacity:1} 10%,91.9%  {opacity:0} 92%,100% {opacity:1} }
+@keyframes a90s-t10  { 0%,9.9%  {opacity:0} 10%,17.9%  {opacity:1} 18%,100% {opacity:0} }
+@keyframes a90s-t20  { 0%,17.9% {opacity:0} 18%,25.9%  {opacity:1} 26%,100% {opacity:0} }
+@keyframes a90s-t30  { 0%,25.9% {opacity:0} 26%,33.9%  {opacity:1} 34%,100% {opacity:0} }
+@keyframes a90s-t40  { 0%,33.9% {opacity:0} 34%,41.9%  {opacity:1} 42%,100% {opacity:0} }
+@keyframes a90s-t50  { 0%,41.9% {opacity:0} 42%,49.9%  {opacity:1} 50%,100% {opacity:0} }
+@keyframes a90s-t60  { 0%,49.9% {opacity:0} 50%,57.9%  {opacity:1} 58%,100% {opacity:0} }
+@keyframes a90s-t70  { 0%,57.9% {opacity:0} 58%,65.9%  {opacity:1} 66%,100% {opacity:0} }
+@keyframes a90s-t80  { 0%,65.9% {opacity:0} 66%,73.9%  {opacity:1} 74%,100% {opacity:0} }
+@keyframes a90s-t90  { 0%,73.9% {opacity:0} 74%,81.9%  {opacity:1} 82%,100% {opacity:0} }
+@keyframes a90s-t100 { 0%,81.9% {opacity:0} 82%,91.9%  {opacity:1} 92%,100% {opacity:0} }
 
 @keyframes alert90s-hourglass {
   0% { transform: rotate(0); }
@@ -811,8 +926,10 @@ select.alert90s-select {
 .alert90s-dark .alert90s-button.cancel { background-color: #f87171; }
 .alert90s-dark .alert90s-button.deny { background-color: #fb923c; }
 .alert90s-dark .alert90s-button.confirm { background-color: #4ade80; }
-.alert90s-dark .alert90s-checkbox-label input[type="checkbox"] { background-color: #1a1a24; }
-.alert90s-dark .alert90s-checkbox-label input[type="checkbox"]:checked { background-color: #00FFFF; }
+.alert90s-dark .alert90s-checkbox-label .cb-box { fill: #1a1a24; stroke: #555; }
+.alert90s-dark .alert90s-checkbox-label input[type="checkbox"]:checked ~ .alert90s-cb-svg .cb-box { fill: #2a2a35; }
+.alert90s-dark .alert90s-checkbox-label .cb-shadow { fill: #555; }
+.alert90s-dark .alert90s-cb-text { color: #eaeaea; }
 .alert90s-dark .alert90s-radio-label input[type="radio"] { background-color: #1a1a24; }
 .alert90s-dark .alert90s-radio-label input[type="radio"]:checked { background-color: #00FFFF; box-shadow: inset 0 0 0 4px #000; }
 

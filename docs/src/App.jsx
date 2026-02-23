@@ -770,6 +770,23 @@ Alert90s.fire({
   didOpen: () => Alert90s.showLoading()
 });`} />
                 </div>
+
+                <div className="card">
+                  <h3>Segmented Progress Bar</h3>
+                  <button onClick={() => {
+                    Alert90s.fire({
+                      title: "LOADING ASSETS...",
+                      loaderType: "segmented",
+                      didOpen: () => Alert90s.showLoading()
+                    });
+                    setTimeout(() => Alert90s.hideLoading(), 7000);
+                  }}>Try me!</button>
+                  <CodeBlock code={`Alert90s.fire({
+  title: "LOADING ASSETS...",
+  loaderType: "segmented",
+  didOpen: () => Alert90s.showLoading()
+});`} />
+                </div>
               </div>
             )}
 

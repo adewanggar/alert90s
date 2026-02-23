@@ -38,6 +38,18 @@ class Alert90s {
           loader.innerHTML = '<div class="alert90s-spinner blinking">LOADING<span class="cursor">_</span></div>';
         } else if (type === 'progress') {
           loader.innerHTML = '<div class="alert90s-spinner progress"></div>';
+        } else if (type === 'segmented') {
+          // Build 10-segment SVG progress bar
+          const segs = [];
+          for (let i = 1; i <= 10; i++) {
+            const x = 5 + (i - 1) * 29;
+            segs.push(`<g class="a90s-seg-${i}"><rect class="a90s-fl-${i}" x="${x}" y="6" width="25" height="28" fill="#ff6b35"/><rect x="${x}" y="6" width="25" height="28" fill="url(#a90s-dither)"/><rect x="${x}" y="6" width="25" height="28" fill="none" stroke="#000" stroke-width="2"/></g>`);
+          }
+          const pctTexts = [];
+          for (let i = 0; i <= 10; i++) {
+            pctTexts.push(`<text x="295" y="55" class="a90s-txt-${i * 10}" text-anchor="end" font-size="14" font-weight="bold" fill="#000">${i * 10}%</text>`);
+          }
+          loader.innerHTML = `<div class="alert90s-spinner segmented"><svg viewBox="0 0 300 60" width="300" height="60"><defs><pattern id="a90s-dither" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0,0 h2 v2 h-2 Z M2,2 h2 v2 h-2 Z" fill="#000" opacity="0.3"/></pattern></defs><rect x="0" y="0" width="300" height="40" fill="#fff" stroke="#000" stroke-width="3" rx="0"/>${segs.join('')}${pctTexts.join('')}</svg></div>`;
         } else {
           loader.innerHTML = '<div class="alert90s-spinner hourglass">⏳</div>';
         }
@@ -471,9 +483,36 @@ class Alert90s {
                 label.appendChild(span);
              }
           } else {
+             // SVG Brutalist Checkbox
+             const svgNS = 'http://www.w3.org/2000/svg';
+             const svg = document.createElementNS(svgNS, 'svg');
+             svg.setAttribute('class', 'alert90s-cb-svg');
+             svg.setAttribute('viewBox', '0 0 100 100');
+             svg.setAttribute('width', '36');
+             svg.setAttribute('height', '36');
+             const shadow = document.createElementNS(svgNS, 'rect');
+             shadow.setAttribute('class', 'cb-shadow');
+             shadow.setAttribute('x', '12'); shadow.setAttribute('y', '12');
+             shadow.setAttribute('width', '80'); shadow.setAttribute('height', '80');
+             shadow.setAttribute('fill', '#000000');
+             const box = document.createElementNS(svgNS, 'rect');
+             box.setAttribute('class', 'cb-box');
+             box.setAttribute('x', '4'); box.setAttribute('y', '4');
+             box.setAttribute('width', '80'); box.setAttribute('height', '80');
+             box.setAttribute('fill', '#e4e0d7'); box.setAttribute('stroke', '#000000');
+             box.setAttribute('stroke-width', '8');
+             const check = document.createElementNS(svgNS, 'path');
+             check.setAttribute('class', 'cb-check');
+             check.setAttribute('d', 'M 22 48 L 40 68 L 82 20');
+             check.setAttribute('fill', 'none'); check.setAttribute('stroke', '#ff6b35');
+             check.setAttribute('stroke-width', '14'); check.setAttribute('stroke-linecap', 'square');
+             check.setAttribute('stroke-linejoin', 'miter');
+             svg.appendChild(shadow); svg.appendChild(box); svg.appendChild(check);
              const span = document.createElement('span');
+             span.className = 'alert90s-cb-text';
              span.textContent = config.inputPlaceholder || 'Check me';
              label.appendChild(inputEl);
+             label.appendChild(svg);
              label.appendChild(span);
           }
           inputContainer.appendChild(label);

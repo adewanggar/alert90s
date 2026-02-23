@@ -74,7 +74,8 @@
     <button id="btn-loading-ascii">19. ASCII Loader</button>
     <button id="btn-loading-blink">20. Blinking Loader</button>
     <button id="btn-loading-prog">21. Progress Loader</button>
-    <button id="btn-toast-spam">22. Spam Toasts (Stacking)</button>
+    <button id="btn-loading-seg">22. Segmented Progress Bar</button>
+    <button id="btn-toast-spam">23. Spam Toasts (Stacking)</button>
 
     <div style="width: 100%; height: 1px; background: #000; margin: 1rem 0;"></div>
 
@@ -430,7 +431,17 @@
         setTimeout(() => { if(Alert90s.isLoading()) Alert90s.hideLoading(); }, 3000);
       });
 
-      // 22. Spam Toasts (Stacking Test)
+      // 22. Segmented Progress Bar
+      document.getElementById("btn-loading-seg").addEventListener("click", () => {
+        Alert90s.fire({
+          title: "LOADING ASSETS...",
+          loaderType: "segmented",
+          didOpen: () => { Alert90s.showLoading(); }
+        });
+        setTimeout(() => { if(Alert90s.isLoading()) Alert90s.hideLoading(); }, 7000);
+      });
+
+      // 23. Spam Toasts (Stacking Test)
       document.getElementById("btn-toast-spam").addEventListener("click", () => {
         for(let i = 0; i < 5; i++) {
           setTimeout(() => {
