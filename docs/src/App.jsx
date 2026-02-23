@@ -30,6 +30,53 @@ function CodeBlock({ title, code }) {
   );
 }
 
+function CheckboxDemo() {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    const inst = Alert90s.renderCheckbox(ref.current, { label: 'ACCEPT TERMS', checked: true });
+    return () => { if (inst) inst.destroy(); };
+  }, []);
+  return <div ref={ref}></div>;
+}
+
+function ToggleDemo() {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    const inst = Alert90s.renderToggle(ref.current, { checked: true });
+    return () => { if (inst) inst.destroy(); };
+  }, []);
+  return <div ref={ref}></div>;
+}
+
+function RadioDemo() {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    const inst = Alert90s.renderRadio(ref.current, { 
+      options: { easy: 'EASY', medium: 'MEDIUM', hard: 'HARD' }, 
+      value: 'medium' 
+    });
+    return () => { if (inst) inst.destroy(); };
+  }, []);
+  return <div ref={ref}></div>;
+}
+
+function SelectDemo() {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    const inst = Alert90s.renderSelect(ref.current, {
+      placeholder: 'SELECT DRIVE',
+      options: { a: 'FLOPPY (A:)', c: 'HARD DISK (C:)', d: 'CD-ROM (D:)' },
+      value: 'c'
+    });
+    return () => { if (inst) inst.destroy(); };
+  }, []);
+  return <div ref={ref}></div>;
+}
+
 function App() {
   const [activeTab, setActiveTab] = useState('alerts');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -418,6 +465,7 @@ Alert90s.fire('Hello world!');`}
                 <option value="toasts">Toasts</option>
                 <option value="loaders">Loaders</option>
                 <option value="inputs">Inputs</option>
+                <option value="components">Components</option>
               </select>
             </div>
 
@@ -445,6 +493,12 @@ Alert90s.fire('Hello world!');`}
                 onClick={() => setActiveTab('inputs')}
               >
                 Inputs
+              </button>
+              <button 
+                className={`tab-btn ${activeTab === 'components' ? 'active' : ''}`} 
+                onClick={() => setActiveTab('components')}
+              >
+                Components
               </button>
             </div>
 
@@ -887,6 +941,76 @@ Alert90s.fire({
   inputPlaceholder: "Enable Turbo Mode",
   inputValue: true
 })`} />
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'components' && (
+              <div className="grid">
+                <div className="card">
+                  <h3>Standalone Checkbox</h3>
+                  <div style={{ padding: '1rem', background: '#f5f5f0', border: '4px solid #000' }}>
+                    <CheckboxDemo />
+                  </div>
+                  <CodeBlock code={`// HTML
+<div id="my-checkbox"></div>
+
+// JS
+const cb = Alert90s.renderCheckbox('#my-checkbox', {
+  label: 'ACCEPT TERMS',
+  checked: true,
+  onChange: (checked) => console.log('Checked:', checked)
+});
+
+// cb.getValue(), cb.setValue(bool), cb.destroy()`} />
+                </div>
+
+                <div className="card">
+                  <h3>Standalone Toggle</h3>
+                  <div style={{ padding: '1rem', background: '#f5f5f0', border: '4px solid #000' }}>
+                    <ToggleDemo />
+                  </div>
+                  <CodeBlock code={`// HTML
+<div id="my-toggle"></div>
+
+// JS
+const toggle = Alert90s.renderToggle('#my-toggle', {
+  checked: true,
+  onChange: (isOn) => console.log('Toggle:', isOn)
+});`} />
+                </div>
+
+                <div className="card">
+                  <h3>Standalone Radio Group</h3>
+                  <div style={{ padding: '1rem', background: '#f5f5f0', border: '4px solid #000' }}>
+                    <RadioDemo />
+                  </div>
+                  <CodeBlock code={`// HTML
+<div id="my-radio"></div>
+
+// JS
+const radio = Alert90s.renderRadio('#my-radio', {
+  options: { easy: 'EASY', medium: 'MEDIUM', hard: 'HARD' },
+  value: 'medium',
+  onChange: (val) => console.log('Selected:', val)
+});`} />
+                </div>
+
+                <div className="card">
+                  <h3>Standalone Select Dropdown</h3>
+                  <div style={{ padding: '1rem', background: '#f5f5f0', border: '4px solid #000' }}>
+                    <SelectDemo />
+                  </div>
+                  <CodeBlock code={`// HTML
+<div id="my-select"></div>
+
+// JS
+const select = Alert90s.renderSelect('#my-select', {
+  placeholder: 'SELECT DRIVE',
+  options: { a: 'FLOPPY (A:)', c: 'HARD DISK (C:)', d: 'CD-ROM (D:)' },
+  value: 'c',
+  onChange: (val) => console.log('Chosen:', val)
+});`} />
                 </div>
               </div>
             )}

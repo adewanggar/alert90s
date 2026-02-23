@@ -441,44 +441,52 @@ textarea.alert90s-input {
   100% { transform: translateX(0); }
 }
 
-/* Toggle Switch */
+/* Toggle Switch (SVG Brutalist) */
 .alert90s-toggle-label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  font-weight: bold;
   cursor: pointer;
+  font-weight: bold;
   font-size: 1rem;
+  user-select: none;
+  position: relative;
 }
 .alert90s-toggle-label input[type="checkbox"] {
-  display: none;
-}
-.alert90s-toggle-slider {
-  width: 3rem;
-  height: 1.5rem;
-  background-color: #f87171;
-  border: 4px solid #000;
-  position: relative;
-  transition: background-color 0.2s;
-  box-shadow: inset 3px 3px 0 0 rgba(0,0,0,0.1);
-}
-.alert90s-toggle-slider::before {
-  content: '';
   position: absolute;
-  width: 1rem;
-  height: 100%;
-  background-color: #fff;
-  border-right: 4px solid #000;
-  top: 0;
-  left: 0;
-  transition: transform 0.2s;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
 }
-.alert90s-toggle-label input[type="checkbox"]:checked + .alert90s-toggle-slider {
-  background-color: #4ade80;
+.alert90s-toggle-svg {
+  overflow: visible;
+  transition: transform 0.1s ease;
 }
-.alert90s-toggle-label input[type="checkbox"]:checked + .alert90s-toggle-slider::before {
-  transform: translateX(1.5rem);
-  border-left: 4px solid #000;
+.alert90s-toggle-label:hover .alert90s-toggle-svg {
+  transform: translate(-2px, -2px);
+}
+.alert90s-toggle-label:active .alert90s-toggle-svg {
+  transform: translate(2px, 2px);
+}
+.toggle-bg {
+  transition: fill 0.2s steps(2, end);
+}
+.alert90s-toggle-label input[type="checkbox"]:checked ~ .alert90s-toggle-svg .toggle-bg {
+  fill: #ff6b35;
+}
+.toggle-knob {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.alert90s-toggle-label input[type="checkbox"]:checked ~ .alert90s-toggle-svg .toggle-knob {
+  transform: translateX(80px);
+}
+.alert90s-toggle-text {
+  transition: color 0.2s;
+}
+.alert90s-toggle-label input[type="checkbox"]:checked ~ .alert90s-toggle-text {
+  animation: alert90s-cb-bump 0.2s ease-out forwards;
+  color: #ff6b35;
 }
 .alert90s-validation-message {
   display: none;

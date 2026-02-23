@@ -544,14 +544,63 @@ class Alert90s {
           inputEl.checked = !!config.inputValue;
           
           if (config.input === 'toggle') {
-             const slider = document.createElement('div');
-             slider.className = 'alert90s-toggle-slider';
+             // SVG Brutalist Toggle
+             const svgNS = 'http://www.w3.org/2000/svg';
+             const svg = document.createElementNS(svgNS, 'svg');
+             svg.setAttribute('class', 'alert90s-toggle-svg');
+             svg.setAttribute('viewBox', '0 0 160 80');
+             svg.setAttribute('width', '100');
+             svg.setAttribute('height', '50');
+             // Shadow
+             const shadowRect = document.createElementNS(svgNS, 'rect');
+             shadowRect.setAttribute('x', '8'); shadowRect.setAttribute('y', '8');
+             shadowRect.setAttribute('width', '144'); shadowRect.setAttribute('height', '64');
+             shadowRect.setAttribute('fill', '#000');
+             // Background track
+             const bg = document.createElementNS(svgNS, 'rect');
+             bg.setAttribute('class', 'toggle-bg');
+             bg.setAttribute('x', '0'); bg.setAttribute('y', '0');
+             bg.setAttribute('width', '144'); bg.setAttribute('height', '64');
+             bg.setAttribute('fill', '#555'); bg.setAttribute('stroke', '#000');
+             bg.setAttribute('stroke-width', '8');
+             // ON/OFF text
+             const onText = document.createElementNS(svgNS, 'text');
+             onText.setAttribute('x', '36'); onText.setAttribute('y', '42');
+             onText.setAttribute('font-family', 'monospace'); onText.setAttribute('font-weight', 'bold');
+             onText.setAttribute('font-size', '20'); onText.setAttribute('fill', '#000');
+             onText.setAttribute('text-anchor', 'middle'); onText.textContent = 'ON';
+             const offText = document.createElementNS(svgNS, 'text');
+             offText.setAttribute('x', '108'); offText.setAttribute('y', '42');
+             offText.setAttribute('font-family', 'monospace'); offText.setAttribute('font-weight', 'bold');
+             offText.setAttribute('font-size', '20'); offText.setAttribute('fill', '#fff');
+             offText.setAttribute('text-anchor', 'middle'); offText.textContent = 'OFF';
+             // Knob group
+             const knob = document.createElementNS(svgNS, 'g');
+             knob.setAttribute('class', 'toggle-knob');
+             const knobRect = document.createElementNS(svgNS, 'rect');
+             knobRect.setAttribute('x', '0'); knobRect.setAttribute('y', '0');
+             knobRect.setAttribute('width', '64'); knobRect.setAttribute('height', '64');
+             knobRect.setAttribute('fill', '#e4e0d7'); knobRect.setAttribute('stroke', '#000');
+             knobRect.setAttribute('stroke-width', '8');
+             knob.appendChild(knobRect);
+             // Grip lines
+             for (const lx of [22, 32, 42]) {
+               const line = document.createElementNS(svgNS, 'line');
+               line.setAttribute('x1', String(lx)); line.setAttribute('y1', '16');
+               line.setAttribute('x2', String(lx)); line.setAttribute('y2', '48');
+               line.setAttribute('stroke', '#000'); line.setAttribute('stroke-width', '4');
+               knob.appendChild(line);
+             }
+             svg.appendChild(shadowRect); svg.appendChild(bg);
+             svg.appendChild(onText); svg.appendChild(offText); svg.appendChild(knob);
+             const span = document.createElement('span');
+             span.className = 'alert90s-toggle-text';
              label.appendChild(inputEl);
-             label.appendChild(slider);
+             label.appendChild(svg);
+             label.appendChild(span);
              if (config.inputPlaceholder) {
-                const span = document.createElement('span');
-                span.textContent = config.inputPlaceholder;
-                label.appendChild(span);
+                span.dataset.labelOn = config.inputPlaceholder;
+                span.dataset.labelOff = config.inputPlaceholder;
              }
           } else {
              // SVG Brutalist Checkbox
@@ -955,6 +1004,193 @@ class Alert90s {
     });
 
     return el;
+  }
+
+  /**
+   * Renders a standalone SVG Brutalist Checkbox.
+   * @param {string|Element} selector - CSS selector or DOM element
+   * @param {Object} options - { label, checked, onChange }
+   * @returns {{ getValue, setValue, destroy, element }}
+   */
+  static renderCheckbox(selector, options = {}) {
+    const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
+    if (!el) return null;
+    const id = 'a90s-cb-' + Date.now();
+    const label = options.label || '';
+    const checked = options.checked ? 'checked' : '';
+    el.innerHTML = `
+      <label class="alert90s-checkbox-label" style="font-family:inherit;">
+        <input type="checkbox" id="${id}" ${checked}>
+        <svg class="alert90s-cb-svg" viewBox="0 0 100 100" width="36" height="36">
+          <rect class="cb-shadow" x="12" y="12" width="80" height="80" fill="#000"/>
+          <rect class="cb-box" x="4" y="4" width="80" height="80" fill="#e4e0d7" stroke="#000" stroke-width="8"/>
+          <path class="cb-check" d="M 22 48 L 40 68 L 82 20" fill="none" stroke="#ff6b35" stroke-width="14" stroke-linecap="square" stroke-linejoin="miter"/>
+        </svg>
+        <span class="alert90s-cb-text">${label}</span>
+      </label>`;
+    const input = el.querySelector(`#${id}`);
+    if (typeof options.onChange === 'function') {
+      input.addEventListener('change', () => options.onChange(input.checked));
+    }
+    return {
+      getValue: () => input.checked,
+      setValue: (v) => { input.checked = !!v; },
+      destroy: () => { el.innerHTML = ''; },
+      element: el
+    };
+  }
+
+  /**
+   * Renders a standalone SVG Brutalist Toggle Switch.
+   * @param {string|Element} selector - CSS selector or DOM element
+   * @param {Object} options - { label, checked, onChange }
+   * @returns {{ getValue, setValue, destroy, element }}
+   */
+  static renderToggle(selector, options = {}) {
+    const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
+    if (!el) return null;
+    const id = 'a90s-tgl-' + Date.now();
+    const label = options.label || '';
+    const checked = options.checked ? 'checked' : '';
+    el.innerHTML = `
+      <label class="alert90s-toggle-label" style="font-family:inherit;">
+        <input type="checkbox" id="${id}" ${checked}>
+        <svg class="alert90s-toggle-svg" viewBox="0 0 160 80" width="100" height="50">
+          <rect x="8" y="8" width="144" height="64" fill="#000"/>
+          <rect class="toggle-bg" x="0" y="0" width="144" height="64" fill="#555" stroke="#000" stroke-width="8"/>
+          <text x="36" y="42" font-family="monospace" font-weight="bold" font-size="20" fill="#000" text-anchor="middle">ON</text>
+          <text x="108" y="42" font-family="monospace" font-weight="bold" font-size="20" fill="#fff" text-anchor="middle">OFF</text>
+          <g class="toggle-knob">
+            <rect x="0" y="0" width="64" height="64" fill="#e4e0d7" stroke="#000" stroke-width="8"/>
+            <line x1="22" y1="16" x2="22" y2="48" stroke="#000" stroke-width="4"/>
+            <line x1="32" y1="16" x2="32" y2="48" stroke="#000" stroke-width="4"/>
+            <line x1="42" y1="16" x2="42" y2="48" stroke="#000" stroke-width="4"/>
+          </g>
+        </svg>
+        <span class="alert90s-toggle-text">${label}</span>
+      </label>`;
+    const input = el.querySelector(`#${id}`);
+    if (typeof options.onChange === 'function') {
+      input.addEventListener('change', () => options.onChange(input.checked));
+    }
+    return {
+      getValue: () => input.checked,
+      setValue: (v) => { input.checked = !!v; },
+      destroy: () => { el.innerHTML = ''; },
+      element: el
+    };
+  }
+
+  /**
+   * Renders a standalone SVG Brutalist Radio Group.
+   * @param {string|Element} selector - CSS selector or DOM element
+   * @param {Object} options - { options: {val:label}, value, onChange }
+   * @returns {{ getValue, setValue, destroy, element }}
+   */
+  static renderRadio(selector, options = {}) {
+    const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
+    if (!el) return null;
+    const name = 'a90s-radio-' + Date.now();
+    const items = options.options || {};
+    let html = '<div class="alert90s-radio-group" style="font-family:inherit;">';
+    for (const [val, text] of Object.entries(items)) {
+      const checkedAttr = val === options.value ? 'checked' : '';
+      html += `
+        <label class="alert90s-radio-label">
+          <input type="radio" name="${name}" value="${val}" ${checkedAttr}>
+          <svg class="alert90s-radio-svg" viewBox="0 0 100 100" width="32" height="32">
+            <circle class="radio-shadow" cx="54" cy="54" r="36" fill="#000"/>
+            <circle class="radio-box" cx="46" cy="46" r="36" fill="#e4e0d7" stroke="#000" stroke-width="8"/>
+            <circle class="radio-dot" cx="46" cy="46" r="18" fill="#ff6b35" stroke="#000" stroke-width="6"/>
+          </svg>
+          <span class="alert90s-radio-text">${text}</span>
+        </label>`;
+    }
+    html += '</div>';
+    el.innerHTML = html;
+    const radios = el.querySelectorAll(`input[name="${name}"]`);
+    if (typeof options.onChange === 'function') {
+      radios.forEach(r => r.addEventListener('change', () => options.onChange(r.value)));
+    }
+    return {
+      getValue: () => { const c = el.querySelector(`input[name="${name}"]:checked`); return c ? c.value : null; },
+      setValue: (v) => { const r = el.querySelector(`input[name="${name}"][value="${v}"]`); if (r) r.checked = true; },
+      destroy: () => { el.innerHTML = ''; },
+      element: el
+    };
+  }
+
+  /**
+   * Renders a standalone SVG Brutalist Select Dropdown.
+   * @param {string|Element} selector - CSS selector or DOM element
+   * @param {Object} options - { placeholder, options: {val:label}, value, onChange }
+   * @returns {{ getValue, setValue, destroy, element }}
+   */
+  static renderSelect(selector, options = {}) {
+    const el = typeof selector === 'string' ? document.querySelector(selector) : selector;
+    if (!el) return null;
+    const toggleId = 'a90s-sel-' + Date.now();
+    const items = options.options || {};
+    const placeholder = options.placeholder || '-- Select --';
+    let initialText = placeholder;
+    let initialVal = options.value || '';
+
+    let itemsHtml = '';
+    for (const [val, text] of Object.entries(items)) {
+      const sel = val === options.value ? ' selected' : '';
+      if (val === options.value) initialText = text;
+      itemsHtml += `<div class="alert90s-select-item${sel}" data-value="${val}">${text}</div>`;
+    }
+
+    el.innerHTML = `
+      <div class="alert90s-select-wrapper" style="font-family:inherit;">
+        <input type="checkbox" id="${toggleId}" class="alert90s-select-toggle">
+        <label for="${toggleId}" class="alert90s-select-box">
+          <span class="alert90s-select-text">${initialText}</span>
+          <svg class="alert90s-select-arrow" viewBox="0 0 24 24" width="22" height="22">
+            <path d="M4 8 L12 16 L20 8" fill="none" stroke="#000" stroke-width="4" stroke-linecap="square" stroke-linejoin="miter"/>
+          </svg>
+        </label>
+        <div class="alert90s-select-menu">${itemsHtml}</div>
+        <input type="hidden" value="${initialVal}">
+      </div>`;
+
+    const hiddenInput = el.querySelector('input[type="hidden"]');
+    const textSpan = el.querySelector('.alert90s-select-text');
+    const toggle = el.querySelector(`#${toggleId}`);
+    const menuItems = el.querySelectorAll('.alert90s-select-item');
+
+    menuItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const val = item.dataset.value;
+        hiddenInput.value = val;
+        textSpan.textContent = item.textContent;
+        toggle.checked = false;
+        menuItems.forEach(i => i.classList.remove('selected'));
+        item.classList.add('selected');
+        if (typeof options.onChange === 'function') options.onChange(val);
+      });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!el.contains(e.target)) toggle.checked = false;
+    });
+
+    return {
+      getValue: () => hiddenInput.value,
+      setValue: (v) => {
+        hiddenInput.value = v;
+        const item = el.querySelector(`.alert90s-select-item[data-value="${v}"]`);
+        if (item) {
+          textSpan.textContent = item.textContent;
+          menuItems.forEach(i => i.classList.remove('selected'));
+          item.classList.add('selected');
+        }
+      },
+      destroy: () => { el.innerHTML = ''; },
+      element: el
+    };
   }
 }
 

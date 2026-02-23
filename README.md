@@ -156,7 +156,7 @@ Alert90s.renderThemeToggle("#my-container", {
 
 ### 8. Input Types (Checkbox, Toggle, Select, Radio)
 
-Alert90s supports rich form inputs inside modals. The **checkbox**, **radio**, and **select dropdown** all use **SVG Brutalist** designs with animated effects (checkmark draw-on, dot pop, animated arrow, slide-in menu).
+Alert90s supports rich form inputs inside modals. The **checkbox**, **radio**, **select dropdown**, and **toggle switch** all use **SVG Brutalist** designs with animated effects (checkmark draw-on, dot pop, animated arrow, slide-in menu, sliding knob).
 
 ```javascript
 // SVG Brutalist Checkbox
@@ -242,6 +242,53 @@ Alert90s includes a lightweight, built-in tooltip library that styles any elemen
 
 **Note:** Tooltips initialize automatically on `DOMContentLoaded`. If you load dynamic content later, call `Alert90s.initTooltips()` to initialize them.
 
+### 9. Standalone Components
+
+All SVG Brutalist inputs can be rendered anywhere on the page — no modal needed! Each returns an API object with `getValue()`, `setValue()`, and `destroy()`.
+
+```html
+<div id="my-checkbox"></div>
+<div id="my-toggle"></div>
+<div id="my-radio"></div>
+<div id="my-select"></div>
+```
+
+```javascript
+// Checkbox
+const cb = Alert90s.renderCheckbox("#my-checkbox", {
+  label: "ACCEPT TERMS",
+  checked: false,
+  onChange: (checked) => console.log("Checked:", checked),
+});
+
+// Toggle Switch
+const toggle = Alert90s.renderToggle("#my-toggle", {
+  label: "",
+  onChange: (isOn) => console.log("Toggle:", isOn),
+});
+
+// Radio Group
+const radio = Alert90s.renderRadio("#my-radio", {
+  options: { easy: "EASY", medium: "MEDIUM", hard: "HARD" },
+  value: "medium",
+  onChange: (val) => console.log("Selected:", val),
+});
+
+// Select Dropdown
+const select = Alert90s.renderSelect("#my-select", {
+  placeholder: "SELECT DRIVE",
+  options: { a: "FLOPPY (A:)", c: "HARD DISK (C:)", d: "CD-ROM (D:)" },
+  onChange: (val) => console.log("Chosen:", val),
+});
+
+// Programmatic API
+cb.getValue(); // true/false
+cb.setValue(true);
+radio.getValue(); // 'medium'
+select.setValue("c"); // updates display
+cb.destroy(); // removes component
+```
+
 ## Support
 
 If you find this project useful, you can support its development:
@@ -292,6 +339,10 @@ If you'd like to collaborate or just say hi, visit my [Portfolio Website](https:
 - `Alert90s.getPopup()`
 - `Alert90s.initTooltips()` / `Alert90s.destroyTooltips()`
 - `Alert90s.renderThemeToggle(selector, options)`
+- `Alert90s.renderCheckbox(selector, options)` → `{ getValue, setValue, destroy }`
+- `Alert90s.renderToggle(selector, options)` → `{ getValue, setValue, destroy }`
+- `Alert90s.renderRadio(selector, options)` → `{ getValue, setValue, destroy }`
+- `Alert90s.renderSelect(selector, options)` → `{ getValue, setValue, destroy }`
 
 ## License
 
