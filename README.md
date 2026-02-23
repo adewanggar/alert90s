@@ -156,7 +156,7 @@ Alert90s.renderThemeToggle("#my-container", {
 
 ### 8. Input Types (Checkbox, Toggle, Select, Radio)
 
-Alert90s supports rich form inputs inside modals. The checkbox uses a **SVG Brutalist** design with animated checkmark draw-on and shake effect.
+Alert90s supports rich form inputs inside modals. The **checkbox**, **radio**, and **select dropdown** all use **SVG Brutalist** designs with animated effects (checkmark draw-on, dot pop, animated arrow, slide-in menu).
 
 ```javascript
 // SVG Brutalist Checkbox
@@ -168,6 +168,18 @@ Alert90s.fire({
   if (result.isConfirmed) {
     Alert90s.fire("Accepted: " + result.value, "", "success");
   }
+});
+
+// SVG Brutalist Radio
+Alert90s.fire({
+  title: "DIFFICULTY",
+  input: "radio",
+  inputOptions: {
+    easy: "I'm too young to die.",
+    medium: "Hurt me plenty.",
+    hard: "Ultra-Violence.",
+  },
+  inputValue: "hard",
 });
 
 // Toggle Switch

@@ -231,17 +231,88 @@ textarea.alert90s-input {
   min-height: 100px;
 }
 
-/* Select */
-select.alert90s-select {
+/* Select/Dropdown (SVG Brutalist) */
+.alert90s-select-wrapper {
+  position: relative;
+  width: 100%;
+  user-select: none;
+  z-index: 10;
+}
+.alert90s-select-toggle { display: none; }
+.alert90s-select-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #e4e0d7;
+  border: 4px solid #000;
+  padding: 0.75rem 1rem;
+  font-weight: bold;
+  font-size: 1rem;
+  color: #000;
   cursor: pointer;
-  appearance: none;
-  background-image: linear-gradient(45deg, transparent 50%, #000 50%), linear-gradient(135deg, #000 50%, transparent 50%);
-  background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px);
-  background-size: 5px 5px, 5px 5px;
-  background-repeat: no-repeat;
+  box-shadow: 4px 4px 0px #000;
+  transition: all 0.1s ease;
+}
+.alert90s-select-box:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0px #000;
+}
+.alert90s-select-arrow {
+  transition: transform 0.2s steps(3, end);
+  flex-shrink: 0;
+}
+.alert90s-select-toggle:checked ~ .alert90s-select-box {
+  background-color: #ff6b35;
+  color: #fff;
+}
+.alert90s-select-toggle:checked ~ .alert90s-select-box .alert90s-select-arrow path {
+  stroke: #fff;
+}
+.alert90s-select-toggle:checked ~ .alert90s-select-box .alert90s-select-arrow {
+  transform: rotate(180deg);
+}
+.alert90s-select-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 8px;
+  background-color: #e4e0d7;
+  border: 4px solid #000;
+  box-shadow: 4px 4px 0px #000;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-15px);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease-out;
+  z-index: 10;
+}
+.alert90s-select-toggle:checked ~ .alert90s-select-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.alert90s-select-item {
+  padding: 0.75rem 1rem;
+  font-weight: bold;
+  font-size: 1rem;
+  border-bottom: 4px solid #000;
+  color: #000;
+  cursor: pointer;
+  transition: background-color 0s, color 0s;
+}
+.alert90s-select-item:last-child { border-bottom: none; }
+.alert90s-select-item:hover {
+  background-color: #000;
+  color: #ff6b35;
+}
+.alert90s-select-item.selected {
+  background-color: #ff6b35;
+  color: #fff;
 }
 
-/* Radio Group */
+/* Radio Group (SVG Brutalist) */
 .alert90s-radio-group {
   display: flex;
   flex-direction: column;
@@ -250,27 +321,59 @@ select.alert90s-select {
   width: 100%;
 }
 .alert90s-radio-label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.75rem;
-  font-weight: bold;
   cursor: pointer;
+  font-weight: bold;
   font-size: 1rem;
+  user-select: none;
+  position: relative;
 }
 .alert90s-radio-label input[type="radio"] {
-  appearance: none;
-  width: 1.25rem;
-  height: 1.25rem;
-  border: 4px solid #000;
-  border-radius: 50%;
-  margin: 0;
+  position: absolute;
+  opacity: 0;
   cursor: pointer;
-  position: relative;
-  background-color: #f8fafc;
+  height: 0;
+  width: 0;
 }
-.alert90s-radio-label input[type="radio"]:checked {
-  background-color: #000;
-  box-shadow: inset 0 0 0 4px #fff;
+.alert90s-radio-svg {
+  overflow: visible;
+  transition: transform 0.1s ease;
+}
+.alert90s-radio-label:hover .alert90s-radio-svg {
+  transform: translate(-2px, -2px);
+}
+.alert90s-radio-label:active .alert90s-radio-svg {
+  transform: translate(2px, 2px);
+}
+.radio-box {
+  transition: fill 0.1s ease;
+}
+.alert90s-radio-label input[type="radio"]:checked ~ .alert90s-radio-svg .radio-box {
+  fill: #ffffff;
+}
+.radio-dot {
+  transform-origin: 50% 50%;
+  transform: scale(0) rotate(-45deg);
+  opacity: 0;
+}
+.alert90s-radio-label input[type="radio"]:checked ~ .alert90s-radio-svg .radio-dot {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+  animation: alert90s-radio-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+@keyframes alert90s-radio-pop {
+  0% { transform: scale(0) rotate(-45deg); fill: #fff; }
+  50% { transform: scale(1.3) rotate(15deg); fill: #fff; }
+  100% { transform: scale(1) rotate(0deg); fill: #ff6b35; }
+}
+.alert90s-radio-text {
+  transition: color 0.2s;
+}
+.alert90s-radio-label input[type="radio"]:checked ~ .alert90s-radio-text {
+  animation: alert90s-cb-bump 0.2s ease-out forwards;
+  color: #ff6b35;
 }
 
 /* Checkbox (SVG Brutalist) */
@@ -910,11 +1013,32 @@ select.alert90s-select {
 .alert90s-dark .alert90s-html a {
   color: #60a5fa;
 }
-.alert90s-dark .alert90s-input, .alert90s-dark select.alert90s-select {
+.alert90s-dark .alert90s-input {
   background-color: #1a1a24;
   color: #fff;
   border-color: #000;
   box-shadow: inset 4px 4px 0 0 rgba(0,0,0,0.5);
+}
+.alert90s-dark .alert90s-select-box {
+  background-color: #1a1a24;
+  color: #eaeaea;
+  border-color: #555;
+  box-shadow: 4px 4px 0px #555;
+}
+.alert90s-dark .alert90s-select-box .alert90s-select-arrow path { stroke: #eaeaea; }
+.alert90s-dark .alert90s-select-toggle:checked ~ .alert90s-select-box { background-color: #ff6b35; color: #fff; }
+.alert90s-dark .alert90s-select-menu {
+  background-color: #1a1a24;
+  border-color: #555;
+  box-shadow: 4px 4px 0px #555;
+}
+.alert90s-dark .alert90s-select-item {
+  color: #eaeaea;
+  border-bottom-color: #555;
+}
+.alert90s-dark .alert90s-select-item:hover {
+  background-color: #555;
+  color: #ff6b35;
 }
 .alert90s-dark .alert90s-input:focus {
   border-color: #00FFFF;
@@ -930,8 +1054,10 @@ select.alert90s-select {
 .alert90s-dark .alert90s-checkbox-label input[type="checkbox"]:checked ~ .alert90s-cb-svg .cb-box { fill: #2a2a35; }
 .alert90s-dark .alert90s-checkbox-label .cb-shadow { fill: #555; }
 .alert90s-dark .alert90s-cb-text { color: #eaeaea; }
-.alert90s-dark .alert90s-radio-label input[type="radio"] { background-color: #1a1a24; }
-.alert90s-dark .alert90s-radio-label input[type="radio"]:checked { background-color: #00FFFF; box-shadow: inset 0 0 0 4px #000; }
+.alert90s-dark .alert90s-radio-label .radio-box { fill: #1a1a24; stroke: #555; }
+.alert90s-dark .alert90s-radio-label input[type="radio"]:checked ~ .alert90s-radio-svg .radio-box { fill: #2a2a35; }
+.alert90s-dark .alert90s-radio-label .radio-shadow { fill: #555; }
+.alert90s-dark .alert90s-radio-text { color: #eaeaea; }
 
 /* =======================================
    THEME TOGGLE COMPONENT (.alert90s-theme-wrapper)

@@ -428,27 +428,75 @@ class Alert90s {
         inputContainer.className = 'alert90s-input-container';
 
         if (config.input === 'select') {
-          inputEl = document.createElement('select');
-          inputEl.className = 'alert90s-input alert90s-select';
-          if (config.inputPlaceholder) {
-            const defaultOpt = document.createElement('option');
-            defaultOpt.value = '';
-            defaultOpt.textContent = config.inputPlaceholder;
-            defaultOpt.disabled = true;
-            defaultOpt.selected = true;
-            inputEl.appendChild(defaultOpt);
-          }
+          // Hidden input to store selected value
+          inputEl = document.createElement('input');
+          inputEl.type = 'hidden';
+          inputEl.value = config.inputValue || '';
+
+          const wrapper = document.createElement('div');
+          wrapper.className = 'alert90s-select-wrapper';
+
+          const toggleId = 'a90s-sel-' + Date.now();
+          const toggle = document.createElement('input');
+          toggle.type = 'checkbox';
+          toggle.id = toggleId;
+          toggle.className = 'alert90s-select-toggle';
+
+          const box = document.createElement('label');
+          box.setAttribute('for', toggleId);
+          box.className = 'alert90s-select-box';
+          const textSpan = document.createElement('span');
+          textSpan.className = 'alert90s-select-text';
+          textSpan.textContent = config.inputPlaceholder || '-- Select --';
+          box.appendChild(textSpan);
+          // SVG Arrow
+          const svgNS = 'http://www.w3.org/2000/svg';
+          const arrow = document.createElementNS(svgNS, 'svg');
+          arrow.setAttribute('class', 'alert90s-select-arrow');
+          arrow.setAttribute('viewBox', '0 0 24 24');
+          arrow.setAttribute('width', '22');
+          arrow.setAttribute('height', '22');
+          const arrowPath = document.createElementNS(svgNS, 'path');
+          arrowPath.setAttribute('d', 'M4 8 L12 16 L20 8');
+          arrowPath.setAttribute('fill', 'none');
+          arrowPath.setAttribute('stroke', '#000');
+          arrowPath.setAttribute('stroke-width', '4');
+          arrowPath.setAttribute('stroke-linecap', 'square');
+          arrowPath.setAttribute('stroke-linejoin', 'miter');
+          arrow.appendChild(arrowPath);
+          box.appendChild(arrow);
+
+          const menu = document.createElement('div');
+          menu.className = 'alert90s-select-menu';
+
           for (const [val, text] of Object.entries(config.inputOptions)) {
-            const opt = document.createElement('option');
-            opt.value = val;
-            opt.textContent = text;
-            if (val === config.inputValue) opt.selected = true;
-            inputEl.appendChild(opt);
+            const item = document.createElement('div');
+            item.className = 'alert90s-select-item';
+            item.textContent = text;
+            item.dataset.value = val;
+            if (val === config.inputValue) {
+              textSpan.textContent = text;
+            }
+            item.addEventListener('click', () => {
+              inputEl.value = val;
+              textSpan.textContent = text;
+              toggle.checked = false;
+              // Highlight selected
+              menu.querySelectorAll('.alert90s-select-item').forEach(i => i.classList.remove('selected'));
+              item.classList.add('selected');
+            });
+            menu.appendChild(item);
           }
-          inputContainer.appendChild(inputEl);
+
+          wrapper.appendChild(toggle);
+          wrapper.appendChild(box);
+          wrapper.appendChild(menu);
+          wrapper.appendChild(inputEl);
+          inputContainer.appendChild(wrapper);
         } else if (config.input === 'radio') {
           const radioGroup = document.createElement('div');
           radioGroup.className = 'alert90s-radio-group';
+          const svgNS = 'http://www.w3.org/2000/svg';
           for (const [val, text] of Object.entries(config.inputOptions)) {
             const label = document.createElement('label');
             label.className = 'alert90s-radio-label';
@@ -457,13 +505,36 @@ class Alert90s {
             radio.name = 'alert90s-radio';
             radio.value = val;
             if (val === config.inputValue) radio.checked = true;
+            // SVG Brutalist Radio
+            const svg = document.createElementNS(svgNS, 'svg');
+            svg.setAttribute('class', 'alert90s-radio-svg');
+            svg.setAttribute('viewBox', '0 0 100 100');
+            svg.setAttribute('width', '32');
+            svg.setAttribute('height', '32');
+            const shadow = document.createElementNS(svgNS, 'circle');
+            shadow.setAttribute('class', 'radio-shadow');
+            shadow.setAttribute('cx', '54'); shadow.setAttribute('cy', '54');
+            shadow.setAttribute('r', '36'); shadow.setAttribute('fill', '#000');
+            const box = document.createElementNS(svgNS, 'circle');
+            box.setAttribute('class', 'radio-box');
+            box.setAttribute('cx', '46'); box.setAttribute('cy', '46');
+            box.setAttribute('r', '36'); box.setAttribute('fill', '#e4e0d7');
+            box.setAttribute('stroke', '#000'); box.setAttribute('stroke-width', '8');
+            const dot = document.createElementNS(svgNS, 'circle');
+            dot.setAttribute('class', 'radio-dot');
+            dot.setAttribute('cx', '46'); dot.setAttribute('cy', '46');
+            dot.setAttribute('r', '18'); dot.setAttribute('fill', '#ff6b35');
+            dot.setAttribute('stroke', '#000'); dot.setAttribute('stroke-width', '6');
+            svg.appendChild(shadow); svg.appendChild(box); svg.appendChild(dot);
             const span = document.createElement('span');
+            span.className = 'alert90s-radio-text';
             span.textContent = text;
             label.appendChild(radio);
+            label.appendChild(svg);
             label.appendChild(span);
             radioGroup.appendChild(label);
           }
-          inputEl = radioGroup; // Parent serves as reference
+          inputEl = radioGroup;
           inputContainer.appendChild(radioGroup);
         } else if (config.input === 'checkbox' || config.input === 'toggle') {
           const label = document.createElement('label');
